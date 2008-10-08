@@ -7,14 +7,19 @@
     <meta name="author" content="Renaud de Villemeur"/>
     <script type="text/javascript" src="mousemove.js"></script>
     <script type="text/javascript" src="clock.js"></script>
+    <script type="text/javascript" src="loadpage.js"></script>
+    
+    <style type="text/css" media="all">
+      @import "clock.css";
+    </style>
+    
     <title>clock</title>
 </head>
 <body>
-    <script type="text/javascript">
-      var MyClock = new clock();
-      //MyClock.DrawClock();
-      setInterval("MyClock.Delay(xmouse, ymouse)",20);
-    </script>
+    <!--script type="text/javascript">
+      var MyClock = new Clock();
+      setInterval("MyClock.move(xmouse, ymouse)",20);
+    </script-->
 <div id="section">
 <p id="texte">Un texte stupide pour habiller cette page.</p>
 <p>
