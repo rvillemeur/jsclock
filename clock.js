@@ -7,6 +7,7 @@ function Clock() {
     this.step=0.06;
     this.currStep=0;
     this.speed=0.6;
+    this.g_timer = null;
 
     this.ClockHeight=40;
     this.ClockWidth=40;
@@ -200,11 +201,11 @@ Clock.prototype.drawClock = function()
   calcule la position de l'horloge par rapport à la souris
   appelle ClockAndAssign() pour dessiner l'horloge à l'écran
 */
-Clock.prototype.move =  function(a_xmouse, a_ymouse) 
+Clock.prototype.move =  function(MouseX, MouseY) 
 {
     
-    var l_xmouse = a_xmouse + 75;
-    var l_ymouse = a_ymouse + 75;
+    var l_xmouse = window.MousePosition.x + 75;
+    var l_ymouse = window.MousePosition.y + 75;
     
     this.calculateSurroundAndNeedleMove(l_xmouse, l_ymouse);
     this.calculateDateMove(l_xmouse, l_ymouse);
@@ -235,4 +236,17 @@ Clock.prototype.calculateDateMove =  function(a_xmouse, a_ymouse)
         this.Dy[i]=Math.round(this.DY[i] += (this.Dy[i-1] - this.DY[i]) * this.speed);
         this.Dx[i]=Math.round(this.DX[i] += (this.Dx[i-1] - this.DX[i]) * this.speed);
     }
+}
+
+
+Clock.prototype.startClock = function()
+{
+    this.stopClock();
+    var l_self = this;
+    l_self.g_timer = setInterval(function(){l_self.move()},20);
+}
+
+Clock.prototype.stopClock = function()
+{
+    clearInterval(this.g_timer);
 }

@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15"/>
     <meta http-equiv="Content-Script-Type" content="text/javascript"/>
     <meta name="author" content="Renaud de Villemeur"/>
+    <script type="text/javascript" src="common.js"></script>
     <script type="text/javascript" src="mousemove.js"></script>
     <script type="text/javascript" src="clock.js"></script>
     <script type="text/javascript" src="loadpage.js"></script>
@@ -16,13 +17,12 @@
     <title>clock</title>
 </head>
 <body>
-    <!--script type="text/javascript">
-      var MyClock = new Clock();
-      setInterval("MyClock.move(xmouse, ymouse)",20);
-    </script-->
 <div id="section">
 <p id="texte">Un texte stupide pour habiller cette page.</p>
-<p>
+<form>
+	<button type="button"  id="stop_clock" >Stop clock</button>
+</form>
+ <p>
     <a href="http://validator.w3.org/check?uri=referer"><img
         src="http://www.w3.org/Icons/valid-xhtml11"
         alt="Valid XHTML 1.1" height="31" width="88" /></a>
