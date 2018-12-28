@@ -1,34 +1,12 @@
-/*
-  objet horloge, qui suit la souris lors de ses deplacements � l'�cran
-*/
-
-var Clock = Object.assign(Object.create(Object.prototype), {
-    initializeDate: function initializeDate() { 
-        var l_date = new Date();
-    
-        var l_day = new Array("DIMANCHE","LUNDI","MARDI","MERCREDI","JEUDI","VENDREDI","SAMEDI");
-        var l_dayName = l_day[l_date.getDay()];
-        var l_currentDay = l_date.getDate();
-        
-        var l_month = new Array("JANVIER","FEVRIER","MARS","AVRIL","MAI","JUIN","JUILLET","AOUT","SEPTEMBRE","OCTOBRE","NOVEMBRE","DECEMBRE");
-        var l_monthName = l_month[l_date.getMonth()];
-        
-        var l_currentYear = l_date.getYear();
-        if (l_currentYear < 2000) 
-            l_currentYear = l_currentYear + 1900;
-            
-        var l_todaysDate = " " + l_dayName + " " + l_currentDay + " " + l_monthName + " " + l_currentYear;
-        
-        return l_todaysDate;
+var Clock = Object.assign({}, {
+    initializeDate: function initializeDate(date) { 
+        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
+        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
+  
+        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initPositionList: function initPositionList(a_positionArray) { 
-        for (var i=0; i < a_positionArray.length; i++)
-        {
-            var l_position = new Object();
-            l_position.x = 0;
-            l_position.y = 0;
-            a_positionArray[i] = l_position;
-        }
+    initPositionList: function initPositionList(positionArray) { 
+        positionArray.map((position) => { position = { x:0, y:0}});
     },
     initSurroundAndNeedlePosition :  function initSurroundAndNeedlePosition() {
         for (var i=0; i < this.Surround.length; i++)
@@ -49,17 +27,17 @@ var Clock = Object.assign(Object.create(Object.prototype), {
         }
     },
     AddClockElement : function AddClockElement(a_element, a_ElementName) {
-        tagBody = document.getElementsByTagName("body")[0];
+        tagBody = document.getElementsByTagName('body')[0];
         
         for (var i=0; i < a_element.length; i++)
         {
-            var newElem = document.createElement("div");
-            newElem.setAttribute("name", a_ElementName);
-            newElem.setAttribute("id", a_ElementName); //used for Internet Explorer
+            var newElem = document.createElement('div');
+            newElem.setAttribute('name', a_ElementName);
+            newElem.setAttribute('id', a_ElementName); //used for Internet Explorer
             newElem.appendChild(document.createTextNode(a_element[i]));
             
-            newElem.style.position = "absolute";
-            newElem.className += " clock ";
+            newElem.style.position = 'absolute';
+            newElem.className += ' clock ';
 
             tagBody.appendChild(newElem);
         }
@@ -69,26 +47,26 @@ var Clock = Object.assign(Object.create(Object.prototype), {
         for (var i=0; i<a_needle.length; i++)
         {
             var l_elementStyle = l_elements[i].style;
-            l_elementStyle.top = this.y[i] + this.YNeedleRelativePosition + (i * this.NeedleHeight)*Math.sin(a_needleAngle) + "px";
-            l_elementStyle.left = this.x[i] + this.XNeedleRelativePosition + (i * this.NeedleWidth)*Math.cos(a_needleAngle) + "px";
+            l_elementStyle.top = this.y[i] + this.YNeedleRelativePosition + (i * this.NeedleHeight)*Math.sin(a_needleAngle) + 'px';
+            l_elementStyle.left = this.x[i] + this.XNeedleRelativePosition + (i * this.NeedleWidth)*Math.cos(a_needleAngle) + 'px';
         }
     },
     displaySurrond : function displaySurrond() {
-        var l_Surround = document.getElementsByName("nSurround");
+        var l_Surround = document.getElementsByName('nSurround');
         for (var i=0; i< this.Surround.length; i++) 
         { 
             var F = l_Surround[i].style;
-            F.top = this.y[i] + this.ClockHeight * Math.sin(-1.0471 + i * this.Split * Math.PI/180) + "px";
-            F.left = this.x[i] + this.ClockWidth * Math.cos(-1.0471 + i * this.Split * Math.PI/180) + "px";
+            F.top = this.y[i] + this.ClockHeight * Math.sin(-1.0471 + i * this.Split * Math.PI/180) + 'px';
+            F.left = this.x[i] + this.ClockWidth * Math.cos(-1.0471 + i * this.Split * Math.PI/180) + 'px';
         }
     },
     displayDate : function displayDate() {
-        var l_date = document.getElementsByName("nDate");
+        var l_date = document.getElementsByName('nDate');
         for (var i=0; i < this.Date.length; i++)
         {
             var DL = l_date[i].style;
-            DL.top=this.Dy[i] + this.ClockHeight * 1.5 * Math.sin(this.currStep + i*this.Dsplit*Math.PI/180) + "px";
-            DL.left=this.Dx[i] + this.ClockWidth * 1.5 * Math.cos(this.currStep + i*this.Dsplit*Math.PI/180) + "px";
+            DL.top=this.Dy[i] + this.ClockHeight * 1.5 * Math.sin(this.currStep + i*this.Dsplit*Math.PI/180) + 'px';
+            DL.left=this.Dx[i] + this.ClockWidth * 1.5 * Math.cos(this.currStep + i*this.Dsplit*Math.PI/180) + 'px';
         }
     },
     drawClock : function drawClock()  {
@@ -99,19 +77,15 @@ var Clock = Object.assign(Object.create(Object.prototype), {
     
             this.displaySurrond();
             
-            this.displayNeedle("nHours",this.HourNeedle,l_hrs);
-            this.displayNeedle("nMinutes",this.MinuteNeedle,l_min);
-            this.displayNeedle("nSeconds",this.SecondNeedle,l_sec);
+            this.displayNeedle('nHours',this.HourNeedle,l_hrs);
+            this.displayNeedle('nMinutes',this.MinuteNeedle,l_min);
+            this.displayNeedle('nSeconds',this.SecondNeedle,l_sec);
     
             this.displayDate();
     
             this.currStep-=this.step;
     },
     move :  function move(MouseX, MouseY) {
-    /*
-    calcule la position de l'horloge par rapport � la souris
-    appelle ClockAndAssign() pour dessiner l'horloge � l'�cran
-    */
         var l_xmouse = window.MousePosition.x + 75;
         var l_ymouse = window.MousePosition.y + 75;
         
@@ -143,86 +117,67 @@ var Clock = Object.assign(Object.create(Object.prototype), {
     startClock : function startClock(){
         this.stopClock();
         var l_self = this;
-        l_self.g_timer = setInterval(function(){l_self.move()},20);
+        l_self.timer = setInterval(function(){l_self.move()},20);
     },
     stopClock : function stopClock() {
-        clearInterval(this.g_timer);
+        clearInterval(this.timer);
     },
     step:0.06,
     currStep:0,
-    speed:0.6,
-    g_timer : null,
+    speed:0.5,
+    timer : null,
     ClockHeight:40,
     ClockWidth:40,
 
-    //  updateSharedVar: function updateSharedVar(value) {
-    //      this.publicSharedVar = value;
-    //  },
 
-        create: function create(value) {
-           var self = Object.create(this);
+    create: function create(value) {
+        var self = Object.create(this);
 
-        //    //Private var and method
-        //    var privateVar = "private_parent_var"; 
-        //    var privateMethod = function privateMethod() { 
-        //    };
-
-        //    self.privilegedVar = "privileged_parent_var"; 
-        //    self.privilegedVar = value;
-               //init Surround and Needle
-            this.HourNeedle='...'.split('');
-            this.MinuteNeedle='....'.split('');
-            this.SecondNeedle='.....'.split('');
-            this.NeedleHeight=this.ClockHeight/4.5
-            this.NeedleWidth=this.ClockWidth/4.5
-            this.XNeedleRelativePosition=-2.5;
-            this.YNeedleRelativePosition=-7;
-                
-            this.Surround='1 2 3 4 5 6 7 8 9 10 11 12'.split(' ');
-            this.Split=360/this.Surround.length;
-
-
-            this.y=new Array();
-            this.x=new Array();
-            this.Y=new Array();
-            this.X=new Array();
-            this.initSurroundAndNeedlePosition();
+        this.HourNeedle='...'.split('');
+        this.MinuteNeedle='....'.split('');
+        this.SecondNeedle='.....'.split('');
+        this.NeedleHeight=this.ClockHeight/4.5
+        this.NeedleWidth=this.ClockWidth/4.5
+        this.XNeedleRelativePosition=-2.5;
+        this.YNeedleRelativePosition=-7;
             
-            this.currentSurroundPosition = new Array(this.Surround.length);
-            this.initPositionList(this.currentSurroundPosition);
-            
-            this.nextSurroundPosition = new Array(this.Surround.length);
-            this.initPositionList(this.nextSurroundPosition);
-            //init date
-            this.Date = this.initializeDate().split('');
-            this.Dsplit=360/this.Date.length;
-            this.Dy=new Array();
-            this.Dx=new Array();
-            this.DY=new Array();
-            this.DX=new Array();
-            this.initDatePosition();
+        this.Surround='1 2 3 4 5 6 7 8 9 10 11 12'.split(' ');
+        this.Split=360/this.Surround.length;
+
+
+        this.y=new Array(this.Surround.length);
+        this.x=new Array(this.Surround.length);
+        this.Y=new Array(this.Surround.length);
+        this.X=new Array(this.Surround.length);
+        this.initSurroundAndNeedlePosition();
         
-            this.currentDatePosition = new Array(this.Date.length);
-            this.initPositionList(this.currentDatePosition);
-            
-            this.nextDatePosition = new Array(this.Date.length);
-            this.initPositionList(this.nextDatePosition);
-            
-            //d�finition du Surround
-            this.AddClockElement(this.Surround, "nSurround");
-            this.AddClockElement(this.HourNeedle, "nHours");
-            this.AddClockElement(this.MinuteNeedle, "nMinutes");
-            this.AddClockElement(this.SecondNeedle, "nSeconds");
-            this.AddClockElement(this.Date, "nDate");
+        this.currentSurroundPosition = new Array(this.Surround.length);
+        this.initPositionList(this.currentSurroundPosition);
+        
+        this.nextSurroundPosition = new Array(this.Surround.length);
+        this.initPositionList(this.nextSurroundPosition);
+        
+        //init date
+        this.Date = this.initializeDate(new Date()).split('');
+        this.Dsplit=360/this.Date.length;
+        this.Dy=new Array();
+        this.Dx=new Array();
+        this.DY=new Array();
+        this.DX=new Array();
+        this.initDatePosition();
+    
+        this.currentDatePosition = new Array(this.Date.length);
+        this.initPositionList(this.currentDatePosition);
+        
+        this.nextDatePosition = new Array(this.Date.length);
+        this.initPositionList(this.nextDatePosition);
+        
+        this.AddClockElement(this.Surround, 'nSurround');
+        this.AddClockElement(this.HourNeedle, 'nHours');
+        this.AddClockElement(this.MinuteNeedle, 'nMinutes');
+        this.AddClockElement(this.SecondNeedle, 'nSeconds');
+        this.AddClockElement(this.Date, 'nDate');
 
-        //    self.privilegedMethod = function privilegedMethod() {
-        //    };
-
-        //    self.updatePrivateVar = function updatePrivateVar(value) {
-        //           privateVar = value;
-        //    };
-
-           return self;
-           }
-      }     
-);
+        return self;
+    }
+});
