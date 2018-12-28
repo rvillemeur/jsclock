@@ -1,6 +1,6 @@
 function initClock()
 {
-    window.MyClock = new Clock();
+    window.MyClock = Clock.create();
     common.addEvent(document.getElementById("stop_clock"), 'click', function( ) {MyClock.stopClock(); });
     
     MyClock.startClock();
