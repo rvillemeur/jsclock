@@ -5,9 +5,7 @@ var Clock = Object.assign({}, {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initPositionList: function initPositionList(positionArray) { 
-        positionArray.map((position) => { position = { x:0, y:0}});
-    },
+
     initSurroundAndNeedlePosition :  function initSurroundAndNeedlePosition() {
         for (var i=0; i < this.Surround.length; i++)
         {
@@ -151,11 +149,6 @@ var Clock = Object.assign({}, {
         this.X=new Array(this.Surround.length);
         this.initSurroundAndNeedlePosition();
         
-        this.currentSurroundPosition = new Array(this.Surround.length);
-        this.initPositionList(this.currentSurroundPosition);
-        
-        this.nextSurroundPosition = new Array(this.Surround.length);
-        this.initPositionList(this.nextSurroundPosition);
         
         //init date
         this.Date = this.initializeDate(new Date()).split('');
@@ -166,11 +159,6 @@ var Clock = Object.assign({}, {
         this.DX=new Array();
         this.initDatePosition();
     
-        this.currentDatePosition = new Array(this.Date.length);
-        this.initPositionList(this.currentDatePosition);
-        
-        this.nextDatePosition = new Array(this.Date.length);
-        this.initPositionList(this.nextDatePosition);
         
         this.AddClockElement(this.Surround, 'nSurround');
         this.AddClockElement(this.HourNeedle, 'nHours');
@@ -181,3 +169,4 @@ var Clock = Object.assign({}, {
         return self;
     }
 });
+
