@@ -1,4 +1,4 @@
-var Clock = Object.assign({}, {
+var Clock = Object.assign(Object.create(Object.prototype), {
     initializeDate: function initializeDate(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
         var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
@@ -170,3 +170,75 @@ var Clock = Object.assign({}, {
     }
 });
 
+var ClockDate = Object.assign(Object.create(Object.prototype), {
+    initializeLabel: function initializeLabel(date) { 
+        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
+        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
+  
+        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
+    },
+    initializePosition :  function initializePosition(length) {
+        return new Array(length).fill(Point.create(0,0));
+    },
+    getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
+        if (OriginalpositionList.length === 0) {
+            return newPositionList;
+        }
+        
+        var currentPoint = OriginalpositionList.shift()
+        var newPoint = currentPoint.addVector(previousPoint.getDistance(currentPoint).multiply(speed).round());
+        newPositionList.push(newPoint);
+
+        return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
+    }, 
+    display: function display() {
+        var dateList = document.getElementsByName('nDate');
+        dateList.map((element, index) => {dateList.splice(index, 0, updateStyle(positionList[index], element))})
+    },
+    updateStyle: function updateStyle(position, element) {
+        var updatedElement = element.
+        element.style.left = position.y + this.ClockWidth * 1.5 * Math.cos(this.currStep + i * this.dateSplit * Math.PI / 180) + 'px';
+        element.style.top = position.x + this.ClockHeight * 1.5 * Math.sin(this.currStep + i * this.dateSplit * Math.PI / 180) + 'px';
+        
+        return updatedElement;
+    }, 
+    create: function create(ClockWidth, ClockHeight, speed ) {
+        var self = Object.create(this);
+
+        self.ClockWidth = ClockWidth;
+        self.ClockHeight = ClockHeight;
+        self.speed = speed;
+
+        self.dateLabel = this.initializeLabel(new Date()).split('');
+        self.dateSplit = 360/self.dateLabel.length;
+        self.positionList = this.initializePosition(self.dateLabel.length);
+
+        return self;
+    }
+});
+
+var Point = Object.assign(Object.create(Object.prototype), {
+    toString: function toString() { 
+        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
+    },
+    getDistance: function getDistance(aPoint) {
+        return Point.create(aPoint.x - this.x, aPoint.y - this.y);
+    },
+    addVector: function addVector(aPoint) {
+        return Point.create(aPoint.x + this.x, aPoint.y + this.y);
+    },
+    multiply: function multiply(aFactor) {
+        return Point.create(this.x * aFactor, this.y * aFactor);
+    },
+    round: function round() {
+        return Point.create(Math.round(this.x), Math.round(this.y));
+    },
+    create: function create(x, y) {
+        var self = Object.create(this);
+
+        self.x = x;
+        self.y = y;
+
+        return self;
+    }
+});
