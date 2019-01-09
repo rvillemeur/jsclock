@@ -5,7 +5,6 @@ var Clock = Object.assign(Object.create(Object.prototype), {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-
     initSurroundAndNeedlePosition :  function initSurroundAndNeedlePosition() {
         for (var i=0; i < this.Surround.length; i++)
         {
@@ -25,7 +24,7 @@ var Clock = Object.assign(Object.create(Object.prototype), {
         }
     },
     AddClockElement : function AddClockElement(a_element, a_ElementName) {
-        tagBody = document.getElementsByTagName('body')[0];
+        tagBody = window.document.getElementsByTagName('body')[0];
         
         for (var i=0; i < a_element.length; i++)
         {
@@ -127,7 +126,6 @@ var Clock = Object.assign(Object.create(Object.prototype), {
     ClockHeight:40,
     ClockWidth:40,
 
-
     create: function create(value) {
         var self = Object.create(this);
 
@@ -177,8 +175,11 @@ var ClockDate = Object.assign(Object.create(Object.prototype), {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initializePosition :  function initializePosition(length) {
-        return new Array(length).fill(Point.create(0,0));
+    initialize :  function initialize(labelArray) {
+        return labelArray.map(
+            (label) => HtmlPoint.create(0, 0, 
+                HtmlPoint.createHtmlElement('nDate', label))
+        );
     },
     getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
         if (OriginalpositionList.length === 0) {
@@ -191,54 +192,96 @@ var ClockDate = Object.assign(Object.create(Object.prototype), {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
-    display: function display() {
-        var dateList = document.getElementsByName('nDate');
-        dateList.map((element, index) => {dateList.splice(index, 0, updateStyle(positionList[index], element))})
-    },
-    updateStyle: function updateStyle(position, element) {
-        var updatedElement = element.
-        element.style.left = position.y + this.ClockWidth * 1.5 * Math.cos(this.currStep + i * this.dateSplit * Math.PI / 180) + 'px';
-        element.style.top = position.x + this.ClockHeight * 1.5 * Math.sin(this.currStep + i * this.dateSplit * Math.PI / 180) + 'px';
-        
-        return updatedElement;
+    draw: function draw(currStep) {
+        this.datePointList.map( (point, index) => point.updateCssPosition(
+            this.ClockWidth * Math.cos(currStep + index * this.circleSplit)
+            , this.ClockHeight * Math.sin(currStep + index * this.circleSplit))
+        )
     }, 
+    attach: function attach(htmlElement) {
+        this.datePointList.map(
+            (point) => htmlElement.appendChild(point.htmlElement())
+        );
+    },
     create: function create(ClockWidth, ClockHeight, speed ) {
         var self = Object.create(this);
 
-        self.ClockWidth = ClockWidth;
-        self.ClockHeight = ClockHeight;
+        self.ClockWidth = ClockWidth * 1.5;
+        self.ClockHeight = ClockHeight * 1.5;
         self.speed = speed;
 
-        self.dateLabel = this.initializeLabel(new Date()).split('');
-        self.dateSplit = 360/self.dateLabel.length;
-        self.positionList = this.initializePosition(self.dateLabel.length);
-
+        var dateArray = this.initializeLabel(new Date()).split('');
+        //circle circumference = 2 * Math.PI * R 
+        self.circleSplit = 2 * Math.PI / dateArray.length;
+        self.datePointList = this.initialize(dateArray);
+        
         return self;
     }
 });
 
-var Point = Object.assign(Object.create(Object.prototype), {
+var HtmlPoint = Object.assign(Object.create(Object.prototype), {
+    createHtmlElement: function createHtmlElement(className, label) {
+        var element = window.document.createElement('div');
+        
+        element.appendChild(window.document.createTextNode(label));
+        element.style.cssText = "position:absolute";
+        element.classList.add(className, 'clock');
+        
+        return element
+    },
+    updateCssPosition: function updateCssPosition(left, top) {
+        var element = this.htmlElement()
+        element.style.left =  this.x() + left + 'px';
+        element.style.top = this.y() + top + 'px';
+    },
     toString: function toString() { 
-        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
+        return '{x:' + this.x() + ', ' + 'y:'+ this.y() + '}'
     },
     getDistance: function getDistance(aPoint) {
-        return Point.create(aPoint.x - this.x, aPoint.y - this.y);
+        return HtmlPoint.create(
+            aPoint.x() - this.x()
+            , aPoint.y() - this.y()
+            , this.htmlElement()
+        );
     },
     addVector: function addVector(aPoint) {
-        return Point.create(aPoint.x + this.x, aPoint.y + this.y);
+        return HtmlPoint.create(
+            aPoint.x() + this.x()
+            , aPoint.y() + this.y()
+            , this.htmlElement()
+        );
     },
     multiply: function multiply(aFactor) {
-        return Point.create(this.x * aFactor, this.y * aFactor);
+        return HtmlPoint.create(
+            this.x() * aFactor
+            , this.y() * aFactor
+            , this.htmlElement()
+        );
     },
     round: function round() {
-        return Point.create(Math.round(this.x), Math.round(this.y));
+        return HtmlPoint.create(
+            Math.round(this.x())
+            , Math.round(this.y())
+            , this.htmlElement()
+        );
     },
-    create: function create(x, y) {
+    create: function create(x, y, htmlElement) {
         var self = Object.create(this);
 
-        self.x = x;
-        self.y = y;
+        //private vars and getters
+        var _x = x;
+        var _y = y;
+        var _htmlElement = htmlElement
 
+        self.x = function x() {
+            return _x;
+        },
+        self.y = function y() {
+            return _y
+        }
+        self.htmlElement = function htmlElement() {
+            return _htmlElement
+        }
         return self;
     }
 });
