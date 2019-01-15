@@ -4,14 +4,20 @@ QUnit.module( "Clock Date", () => {
         t.equal( ClockDate.initializeLabel(new Date('August 19, 1975 23:15:30')), ' MARDI 19 AOUT 1975'
         , "initialize date passed" );
         
-        t.equal( ClockDate.initializePoint(['A','B','c']).toString()
+        t.equal( ClockDate.initializePosition(['A','B','c'])
+                          .map((item) => item.point)
+                          .toString()
         , '{x:0, y:0},{x:0, y:0},{x:0, y:0}'
         , "initializePosition passed")
   });
   test( "calculate new position", t => {
         t.deepEqual(ClockDate.getNewPosition(
-            ClockDate.initializePoint(['A','B','c']),
-            Point.create(10, 10),0.6,  []).toString()
+            ClockDate.initializePosition(['A','B','c']),
+                                         Point.create(10, 10),
+                                         0.6,  
+                                         [])
+                     .map((item) => item.point)
+                     .toString()
         , '{x:-6, y:-6},{x:4, y:4},{x:-2, y:-2}'
         , "get new position date passed");
    });

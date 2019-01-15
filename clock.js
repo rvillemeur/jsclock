@@ -170,6 +170,9 @@ const Clock = Object.assign(Object.create(Object.prototype), {
 });
 
 const ClockDate = Object.assign(Object.create(Object.prototype), {
+    toString: function toString() { 
+        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
+    },
     createHtmlElement: function createHtmlElement(label) {
         const element = window.document.createElement('div');
         
@@ -189,40 +192,44 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initializePoint :  function initializePoint(labelArray) {
-        return labelArray.map((item) => Point.create(0, 0));
+    initializePosition :  function initializePosition(labelArray) {
+        return labelArray.map((label) => this.position(label));
     },
-    initializeHTML :  function initializeHTML(labelArray) {
-        return labelArray.map((label) => this.createHtmlElement(label));
+    position: function position(label) {
+        return {point: Point.create(0, 0), html: this.createHtmlElement(label)};
     },
     getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
         if (OriginalpositionList.length === 0) {
             return newPositionList;
         }
-        
-        var currentPoint = OriginalpositionList.shift()
-        var newPoint = currentPoint.addVector(previousPoint.getDistance(currentPoint).multiply(speed).round());
-        newPositionList.push(newPoint);
+        const currentPosition = OriginalpositionList.shift();
+        const currentPoint = currentPosition.point
+        const newPoint = currentPoint.addVector(
+            previousPoint.getDistance(currentPoint)
+                         .multiply(speed)
+                         .round()
+        );
+        newPositionList.push({point:newPoint, html: currentPosition.html});
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
-    displayX: function(currStep, index) {
-        return this.ClockWidth * Math.cos(currStep + index * this.circleSplit);
-    },
-    displayY: function displayY (currStep, index) {
-        this.clockHeight * Math.sin(currStep + index * this.circleSplit)
-    },
-    draw: function draw(currStep) {
-        this.datePointList.map( (point, index) => point.updateCssPosition(
-            this.clockWidth * Math.cos(currStep + index * this.circleSplit)
-            , this.clockHeight * Math.sin(currStep + index * this.circleSplit))
-        )
-    }, 
-    attach: function attach(htmlElement) {
-        this.datePointList.map(
-            (point) => htmlElement.appendChild(point.htmlElement())
-        );
-    },
+    // displayX: function(currStep, index) {
+    //     return this.ClockWidth * Math.cos(currStep + index * this.circleSplit);
+    // },
+    // displayY: function displayY (currStep, index) {
+    //     this.clockHeight * Math.sin(currStep + index * this.circleSplit)
+    // },
+    // draw: function draw(currStep) {
+    //     this.datePointList.map( (point, index) => point.updateCssPosition(
+    //         this.clockWidth * Math.cos(currStep + index * this.circleSplit)
+    //         , this.clockHeight * Math.sin(currStep + index * this.circleSplit))
+    //     )
+    // }, 
+    // attach: function attach(htmlElement) {
+    //     this.positionList.map(
+    //         (point) => htmlElement.appendChild(point.htmlElement())
+    //     );
+    // },
     create: function create(label, ClockWidth, ClockHeight, speed ) {
         const self = Object.create(this);
 
@@ -245,8 +252,8 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
             writable: false
         });
 
-        self.pointList = this.initializePoint(dateArray);
-        self.htmlPointList = this.initializeHTML(dateArray);
+        self.positionList = this.initializePosition(dateArray);
+        //self.htmlPointList = this.initializeHTML(dateArray);
         
         return self;
     }
