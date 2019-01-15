@@ -1,4 +1,4 @@
-var Clock = Object.assign(Object.create(Object.prototype), {
+const Clock = Object.assign(Object.create(Object.prototype), {
     initializeDate: function initializeDate(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
         var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
@@ -52,6 +52,7 @@ var Clock = Object.assign(Object.create(Object.prototype), {
         var l_Surround = document.getElementsByName('nSurround');
         for (var i=0; i< this.Surround.length; i++) 
         { 
+            //-60 degree = -1.0471975512 radian
             var F = l_Surround[i].style;
             F.top = this.y[i] + this.ClockHeight * Math.sin(-1.0471 + i * this.Split * Math.PI/180) + 'px';
             F.left = this.x[i] + this.ClockWidth * Math.cos(-1.0471 + i * this.Split * Math.PI/180) + 'px';
@@ -168,18 +169,31 @@ var Clock = Object.assign(Object.create(Object.prototype), {
     }
 });
 
-var ClockDate = Object.assign(Object.create(Object.prototype), {
+const ClockDate = Object.assign(Object.create(Object.prototype), {
+    createHtmlElement: function createHtmlElement(label) {
+        const element = window.document.createElement('div');
+        
+        element.appendChild(window.document.createTextNode(label));
+        element.style.cssText = "position:absolute";
+        element.classList.add('clock');
+        
+        return element
+    },
+    updateCssPosition: function updateCssPosition(htmlElement, point) {
+        htmlElement.style.left =  point.x + 'px';
+        htmlElement.style.top = point.y + 'px';
+    },
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
         var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initialize :  function initialize(labelArray) {
-        return labelArray.map(
-            (label) => HtmlPoint.create(0, 0, 
-                HtmlPoint.createHtmlElement('nDate', label))
-        );
+    initializePoint :  function initializePoint(labelArray) {
+        return labelArray.map((item) => Point.create(0, 0));
+    },
+    initializeHTML :  function initializeHTML(labelArray) {
+        return labelArray.map((label) => this.createHtmlElement(label));
     },
     getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
         if (OriginalpositionList.length === 0) {
@@ -192,10 +206,16 @@ var ClockDate = Object.assign(Object.create(Object.prototype), {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
+    displayX: function(currStep, index) {
+        return this.ClockWidth * Math.cos(currStep + index * this.circleSplit);
+    },
+    displayY: function displayY (currStep, index) {
+        this.clockHeight * Math.sin(currStep + index * this.circleSplit)
+    },
     draw: function draw(currStep) {
         this.datePointList.map( (point, index) => point.updateCssPosition(
-            this.ClockWidth * Math.cos(currStep + index * this.circleSplit)
-            , this.ClockHeight * Math.sin(currStep + index * this.circleSplit))
+            this.clockWidth * Math.cos(currStep + index * this.circleSplit)
+            , this.clockHeight * Math.sin(currStep + index * this.circleSplit))
         )
     }, 
     attach: function attach(htmlElement) {
@@ -203,85 +223,70 @@ var ClockDate = Object.assign(Object.create(Object.prototype), {
             (point) => htmlElement.appendChild(point.htmlElement())
         );
     },
-    create: function create(ClockWidth, ClockHeight, speed ) {
-        var self = Object.create(this);
+    create: function create(label, ClockWidth, ClockHeight, speed ) {
+        const self = Object.create(this);
 
-        self.ClockWidth = ClockWidth * 1.5;
-        self.ClockHeight = ClockHeight * 1.5;
-        self.speed = speed;
-
-        var dateArray = this.initializeLabel(new Date()).split('');
+        const dateArray = this.initializeLabel(new Date()).split('');
+        Object.defineProperty(self, 'clockWidth', {
+            value: ClockWidth * 1.5, 
+            writable: false
+        });
+        Object.defineProperty(self, 'clockHeight', {
+            value: ClockHeight * 1.5, 
+            writable: false
+        });
+        Object.defineProperty(self, 'speed', {
+            value: speed, 
+            writable: false
+        });
         //circle circumference = 2 * Math.PI * R 
-        self.circleSplit = 2 * Math.PI / dateArray.length;
-        self.datePointList = this.initialize(dateArray);
+        Object.defineProperty(self, 'circleSplit', {
+            value: 2 * Math.PI / dateArray.lengt, 
+            writable: false
+        });
+
+        self.pointList = this.initializePoint(dateArray);
+        self.htmlPointList = this.initializeHTML(dateArray);
         
         return self;
     }
 });
 
-var HtmlPoint = Object.assign(Object.create(Object.prototype), {
-    createHtmlElement: function createHtmlElement(className, label) {
-        var element = window.document.createElement('div');
-        
-        element.appendChild(window.document.createTextNode(label));
-        element.style.cssText = "position:absolute";
-        element.classList.add(className, 'clock');
-        
-        return element
-    },
-    updateCssPosition: function updateCssPosition(left, top) {
-        var element = this.htmlElement()
-        element.style.left =  this.x() + left + 'px';
-        element.style.top = this.y() + top + 'px';
-    },
+const Point = Object.assign(Object.create(Object.prototype), {
     toString: function toString() { 
-        return '{x:' + this.x() + ', ' + 'y:'+ this.y() + '}'
+        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
     },
     getDistance: function getDistance(aPoint) {
-        return HtmlPoint.create(
-            aPoint.x() - this.x()
-            , aPoint.y() - this.y()
-            , this.htmlElement()
+        return Point.create(
+            aPoint.x - this.x
+            , aPoint.y - this.y
         );
     },
     addVector: function addVector(aPoint) {
-        return HtmlPoint.create(
-            aPoint.x() + this.x()
-            , aPoint.y() + this.y()
-            , this.htmlElement()
+        return Point.create(
+            aPoint.x + this.x
+            , aPoint.y + this.y
         );
     },
     multiply: function multiply(aFactor) {
-        return HtmlPoint.create(
-            this.x() * aFactor
-            , this.y() * aFactor
-            , this.htmlElement()
+        return Point.create(
+            this.x * aFactor
+            , this.y * aFactor
         );
     },
     round: function round() {
-        return HtmlPoint.create(
-            Math.round(this.x())
-            , Math.round(this.y())
-            , this.htmlElement()
+        return Point.create(
+            Math.round(this.x)
+            , Math.round(this.y)
         );
     },
-    create: function create(x, y, htmlElement) {
-        var self = Object.create(this);
 
-        //private vars and getters
-        var _x = x;
-        var _y = y;
-        var _htmlElement = htmlElement
+    create: function create(x, y) {
+        const self = Object.create(this);
 
-        self.x = function x() {
-            return _x;
-        },
-        self.y = function y() {
-            return _y
-        }
-        self.htmlElement = function htmlElement() {
-            return _htmlElement
-        }
+        Object.defineProperty(self, 'x', {value: x, writable: false});
+        Object.defineProperty(self, 'y', {value: y, writable: false});
+
         return self;
     }
 });
