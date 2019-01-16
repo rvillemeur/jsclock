@@ -182,9 +182,9 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         
         return element
     },
-    updateCssPosition: function updateCssPosition(htmlElement, point) {
-        htmlElement.style.left =  point.x + 'px';
-        htmlElement.style.top = point.y + 'px';
+    updateCssPosition: function updateCssPosition(htmlElement, x, y) {
+        htmlElement.style.left =  x + 'px';
+        htmlElement.style.top = y + 'px';
     },
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
@@ -192,11 +192,17 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    initializePosition :  function initializePosition(labelArray) {
+    initializePositions :  function initializePositions(labelArray) {
         return labelArray.map((label) => this.position(label));
     },
     position: function position(label) {
-        return {point: Point.create(0, 0), html: this.createHtmlElement(label)};
+        const htmlElement = this.createHtmlElement(label);
+        this.attachHtmlToBody(htmlElement);
+        return {point: Point.create(0, 0), html: htmlElement };
+    },
+    attachHtmlToBody: function attachHtmlToBody(htmlElement) {
+        tagBody = window.document.getElementsByTagName('body')[0];  
+        tagBody.appendChild(htmlElement);
     },
     getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
         if (OriginalpositionList.length === 0) {
@@ -213,23 +219,19 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
-    // displayX: function(currStep, index) {
-    //     return this.ClockWidth * Math.cos(currStep + index * this.circleSplit);
-    // },
-    // displayY: function displayY (currStep, index) {
-    //     this.clockHeight * Math.sin(currStep + index * this.circleSplit)
-    // },
-    // draw: function draw(currStep) {
-    //     this.datePointList.map( (point, index) => point.updateCssPosition(
-    //         this.clockWidth * Math.cos(currStep + index * this.circleSplit)
-    //         , this.clockHeight * Math.sin(currStep + index * this.circleSplit))
-    //     )
-    // }, 
-    // attach: function attach(htmlElement) {
-    //     this.positionList.map(
-    //         (point) => htmlElement.appendChild(point.htmlElement())
-    //     );
-    // },
+    xOffset: function xOffset(width, currStep, index, split) {
+        return width * Math.cos(currStep + index * split);
+    },
+    yOffset: function yOffset (heigth, currStep, index, split) {
+        return heigth * Math.sin(currStep + index * split);
+    },
+    draw: function draw(currStep) {
+        this.datePointList.map( (position, index) => {
+            this.updateCssPosition(position.html, 
+                position.point.x + this.xOffset(this.clockWidth, currStep, index, this.circleSplit),
+                position.point.y + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
+        })
+    }, 
     create: function create(label, ClockWidth, ClockHeight, speed ) {
         const self = Object.create(this);
 
@@ -252,8 +254,7 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
             writable: false
         });
 
-        self.positionList = this.initializePosition(dateArray);
-        //self.htmlPointList = this.initializeHTML(dateArray);
+        self.positionList = this.initializePositions(dateArray);
         
         return self;
     }
