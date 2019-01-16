@@ -170,9 +170,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
 });
 
 const ClockDate = Object.assign(Object.create(Object.prototype), {
-    toString: function toString() { 
-        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
-    },
     createHtmlElement: function createHtmlElement(label) {
         const element = window.document.createElement('div');
         
@@ -226,13 +223,13 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         return heigth * Math.sin(currStep + index * split);
     },
     draw: function draw(currStep) {
-        this.datePointList.map( (position, index) => {
+        this.datePointList.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
                 position.point.x + this.xOffset(this.clockWidth, currStep, index, this.circleSplit),
                 position.point.y + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
         })
     }, 
-    create: function create(label, ClockWidth, ClockHeight, speed ) {
+    create: function create(ClockWidth, ClockHeight, speed ) {
         const self = Object.create(this);
 
         const dateArray = this.initializeLabel(new Date()).split('');
