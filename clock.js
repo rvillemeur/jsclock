@@ -229,6 +229,11 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
                 position.point.y + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
         })
     }, 
+    update: function update(point) {
+        this.positionList = this.getNewPosition(this.positionList, point, this.speed, []);
+        this.draw(this.currStep);
+        this.currStep -= this.speed;
+    },
     create: function create(ClockWidth, ClockHeight, speed ) {
         const self = Object.create(this);
 
@@ -245,12 +250,15 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
             value: speed, 
             writable: false
         });
+        Object.defineProperty(self, 'currStep', {
+            value: 0, 
+            writable: true
+        });
         //circle circumference = 2 * Math.PI * R 
         Object.defineProperty(self, 'circleSplit', {
             value: 2 * Math.PI / dateArray.lengt, 
             writable: false
         });
-
         self.positionList = this.initializePositions(dateArray);
         
         return self;
