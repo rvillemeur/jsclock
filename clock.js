@@ -1,10 +1,4 @@
 const Clock = Object.assign(Object.create(Object.prototype), {
-    initializeDate: function initializeDate(date) { 
-        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
-        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
-  
-        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
-    },
     initSurroundAndNeedlePosition :  function initSurroundAndNeedlePosition() {
         for (var i=0; i < this.Surround.length; i++)
         {
@@ -12,15 +6,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.x[i]=0;
             this.Y[i]=0;
             this.X[i]=0
-        }
-    },
-    initDatePosition :  function initDatePosition() {
-        for (var i=0; i < this.Date.length; i++)
-        {
-            this.Dy[i]=0;
-            this.Dx[i]=0;
-            this.DY[i]=0;
-            this.DX[i]=0;
         }
     },
     AddClockElement : function AddClockElement(a_element, a_ElementName) {
@@ -58,15 +43,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             F.left = this.x[i] + this.ClockWidth * Math.cos(-1.0471 + i * this.Split * Math.PI/180) + 'px';
         }
     },
-    displayDate : function displayDate() {
-        var l_date = document.getElementsByName('nDate');
-        for (var i=0; i < this.Date.length; i++)
-        {
-            var DL = l_date[i].style;
-            DL.top=this.Dy[i] + this.ClockHeight * 1.5 * Math.sin(this.currStep + i*this.Dsplit*Math.PI/180) + 'px';
-            DL.left=this.Dx[i] + this.ClockWidth * 1.5 * Math.cos(this.currStep + i*this.Dsplit*Math.PI/180) + 'px';
-        }
-    },
     drawClock : function drawClock()  {
             var l_time = new Date ();
             var l_sec = -1.57 + Math.PI * l_time.getSeconds() / 30;;
@@ -78,9 +54,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.displayNeedle('nHours',this.HourNeedle,l_hrs);
             this.displayNeedle('nMinutes',this.MinuteNeedle,l_min);
             this.displayNeedle('nSeconds',this.SecondNeedle,l_sec);
-    
-            this.displayDate();
-    
             this.currStep-=this.step;
     },
     move :  function move(MouseX, MouseY) {
@@ -88,7 +61,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         var l_ymouse = window.MousePosition.y + 75;
         
         this.calculateSurroundAndNeedleMove(l_xmouse, l_ymouse);
-        this.calculateDateMove(l_xmouse, l_ymouse);
+        this.clockDate.update(Point.create(l_xmouse, l_ymouse));
 
         this.drawClock();
     },
@@ -100,16 +73,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         {
             this.y[i]=Math.round(this.Y[i] += (this.y[i-1] - this.Y[i]) * this.speed);
             this.x[i]=Math.round(this.X[i] += (this.x[i-1] - this.X[i]) * this.speed);
-        }
-    },
-    calculateDateMove :  function calculateDateMove(a_xmouse, a_ymouse) {
-        this.Dx[0] = Math.round(this.DX[0] += (a_xmouse - this.DX[0]) * this.speed);
-        this.Dy[0] = Math.round(this.DY[0] += (a_ymouse - this.DY[0]) * this.speed);
-        
-        for (var i=1; i < this.Date.length; i++)
-        {
-            this.Dy[i]=Math.round(this.DY[i] += (this.Dy[i-1] - this.DY[i]) * this.speed);
-            this.Dx[i]=Math.round(this.DX[i] += (this.Dx[i-1] - this.DX[i]) * this.speed);
         }
     },
     startClock : function startClock(){
@@ -147,24 +110,13 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         this.Y=new Array(this.Surround.length);
         this.X=new Array(this.Surround.length);
         this.initSurroundAndNeedlePosition();
-        
-        
-        //init date
-        this.Date = this.initializeDate(new Date()).split('');
-        this.Dsplit=360/this.Date.length;
-        this.Dy=new Array();
-        this.Dx=new Array();
-        this.DY=new Array();
-        this.DX=new Array();
-        this.initDatePosition();
     
         
         this.AddClockElement(this.Surround, 'nSurround');
         this.AddClockElement(this.HourNeedle, 'nHours');
         this.AddClockElement(this.MinuteNeedle, 'nMinutes');
         this.AddClockElement(this.SecondNeedle, 'nSeconds');
-        this.AddClockElement(this.Date, 'nDate');
-
+        this.clockDate = ClockDate.create(40, 40, 0.04 )
         return self;
     }
 });
@@ -201,18 +153,16 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         tagBody = window.document.getElementsByTagName('body')[0];  
         tagBody.appendChild(htmlElement);
     },
-    getNewPosition: function getNewPosition(OriginalpositionList, previousPoint, speed, newPositionList) {
+    getNewPosition: function getNewPosition(OriginalpositionList, initPoint, speed, newPositionList) {
         if (OriginalpositionList.length === 0) {
             return newPositionList;
         }
         const currentPosition = OriginalpositionList.shift();
+        newPositionList.push({point:initPoint, html: currentPosition.html});
+
         const currentPoint = currentPosition.point
         const newPoint = currentPoint.addVector(
-            previousPoint.getDistance(currentPoint)
-                         .multiply(speed)
-                         .round()
-        );
-        newPositionList.push({point:newPoint, html: currentPosition.html});
+            initPoint.getDistance(currentPoint).multiply(speed));
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
@@ -223,10 +173,10 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         return heigth * Math.sin(currStep + index * split);
     },
     draw: function draw(currStep) {
-        this.datePointList.forEach( (position, index) => {
+        this.positionList.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
-                position.point.x + this.xOffset(this.clockWidth, currStep, index, this.circleSplit),
-                position.point.y + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
+                Math.round(position.point.x) + this.xOffset(this.clockWidth, currStep, index, this.circleSplit),
+                Math.round(position.point.y) + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
         })
     }, 
     update: function update(point) {
@@ -256,7 +206,7 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         });
         //circle circumference = 2 * Math.PI * R 
         Object.defineProperty(self, 'circleSplit', {
-            value: 2 * Math.PI / dateArray.lengt, 
+            value: 2 * Math.PI / dateArray.length, 
             writable: false
         });
         self.positionList = this.initializePositions(dateArray);
@@ -271,20 +221,20 @@ const Point = Object.assign(Object.create(Object.prototype), {
     },
     getDistance: function getDistance(aPoint) {
         return Point.create(
-            aPoint.x - this.x
-            , aPoint.y - this.y
+            (aPoint.x - this.x)
+            , (aPoint.y - this.y)
         );
     },
     addVector: function addVector(aPoint) {
         return Point.create(
-            aPoint.x + this.x
-            , aPoint.y + this.y
+            (aPoint.x + this.x)
+            , (aPoint.y + this.y)
         );
     },
     multiply: function multiply(aFactor) {
         return Point.create(
-            this.x * aFactor
-            , this.y * aFactor
+            (this.x * aFactor)
+            , (this.y * aFactor)
         );
     },
     round: function round() {
