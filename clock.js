@@ -54,7 +54,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.displayNeedle('nHours',this.HourNeedle,l_hrs);
             this.displayNeedle('nMinutes',this.MinuteNeedle,l_min);
             this.displayNeedle('nSeconds',this.SecondNeedle,l_sec);
-            this.currStep-=this.step;
     },
     move :  function move(MouseX, MouseY) {
         var l_xmouse = window.MousePosition.x + 75;
@@ -83,8 +82,6 @@ const Clock = Object.assign(Object.create(Object.prototype), {
     stopClock : function stopClock() {
         clearInterval(this.timer);
     },
-    step:0.06,
-    currStep:0,
     speed:0.5,
     timer : null,
     ClockHeight:40,
@@ -217,31 +214,20 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
 
 const Point = Object.assign(Object.create(Object.prototype), {
     toString: function toString() { 
-        return '{x:' + this.x + ', ' + 'y:'+ this.y + '}'
+        return '{x:' + (this.x).toFixed(2) + ', ' 
+              + 'y:'+ (this.y).toFixed(2) + '}'
     },
     getDistance: function getDistance(aPoint) {
-        return Point.create(
-            (aPoint.x - this.x)
-            , (aPoint.y - this.y)
-        );
+        return Point.create(aPoint.x - this.x, aPoint.y - this.y);
     },
     addVector: function addVector(aPoint) {
-        return Point.create(
-            (aPoint.x + this.x)
-            , (aPoint.y + this.y)
-        );
+        return Point.create(aPoint.x + this.x, aPoint.y + this.y);
     },
     multiply: function multiply(aFactor) {
-        return Point.create(
-            (this.x * aFactor)
-            , (this.y * aFactor)
-        );
+        return Point.create(this.x * aFactor, this.y * aFactor);
     },
     round: function round() {
-        return Point.create(
-            Math.round(this.x)
-            , Math.round(this.y)
-        );
+        return Point.create(Math.round(this.x), Math.round(this.y));
     },
 
     create: function create(x, y) {
