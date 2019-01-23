@@ -74,12 +74,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.x[i]=Math.round(this.X[i] += (this.x[i-1] - this.X[i]) * this.speed);
         }
     },
-    initializeLabel: function initializeLabel(date) { 
-        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
-        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
-  
-        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
-    },
+
     startClock : function startClock(){
         this.stopClock();
         var l_self = this;
@@ -100,7 +95,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         this.MinuteNeedle='....'.split('');
         this.SecondNeedle='.....'.split('');
         this.Surround='1 2 3 4 5 6 7 8 9 10 11 12'.split(' ');
-        self.todayDate = this.initializeLabel(new Date()).split(''); 
+        
         
         this.NeedleHeight=this.ClockHeight/4.5
         this.NeedleWidth=this.ClockWidth/4.5
@@ -120,7 +115,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         this.AddClockElement(this.HourNeedle, 'nHours');
         this.AddClockElement(this.MinuteNeedle, 'nMinutes');
         this.AddClockElement(this.SecondNeedle, 'nSeconds');
-        this.clockDate = ClockDate.create(this.ClockWidth * 1.5, this.ClockHeight * 1.5, self.todayDate, 0.04 )
+        this.clockDate = ClockDate.create(this.ClockWidth * 1.5, this.ClockHeight * 1.5, 0.04 )
         return self;
     }
 });
@@ -138,6 +133,12 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
     updateCssPosition: function updateCssPosition(htmlElement, x, y) {
         htmlElement.style.left =  x + 'px';
         htmlElement.style.top = y + 'px';
+    },
+    initializeLabel: function initializeLabel(date) { 
+        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
+        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
+  
+        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
     initializePositions :  function initializePositions(labelArray) {
         return labelArray.map((label) => this.position(label));
@@ -182,9 +183,10 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         this.draw(this.currStep);
         this.currStep -= this.speed;
     },
-    create: function create(clockWidth, clockHeight, dateArray, speed ) {
+    create: function create(clockWidth, clockHeight, speed ) {
         const self = Object.create(this);
 
+        const dateArray = this.initializeLabel(new Date()).split(''); 
         Object.defineProperty(self, 'clockWidth', {
             value: clockWidth, 
             writable: false

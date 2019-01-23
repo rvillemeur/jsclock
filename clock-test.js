@@ -1,7 +1,7 @@
 const { test } = QUnit;
 QUnit.module( "Clock Date", () => {
   test( "initialize clock date", t => {
-        t.equal( Clock.initializeLabel(new Date('August 19, 1975 23:15:30')), ' MARDI 19 AOUT 1975'
+        t.equal( ClockDate.initializeLabel(new Date('August 19, 1975 23:15:30')), ' MARDI 19 AOUT 1975'
         , "initialize date passed" );
         
         t.equal( ClockDate.initializePositions(['A','B','c'])
