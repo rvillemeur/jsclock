@@ -55,7 +55,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.displayNeedle('nMinutes',this.MinuteNeedle,l_min);
             this.displayNeedle('nSeconds',this.SecondNeedle,l_sec);
     },
-    move :  function move(MouseX, MouseY) {
+    move :  function move() {
         var l_xmouse = window.MousePosition.x + 75;
         var l_ymouse = window.MousePosition.y + 75;
         
@@ -73,6 +73,12 @@ const Clock = Object.assign(Object.create(Object.prototype), {
             this.y[i]=Math.round(this.Y[i] += (this.y[i-1] - this.Y[i]) * this.speed);
             this.x[i]=Math.round(this.X[i] += (this.x[i-1] - this.X[i]) * this.speed);
         }
+    },
+    initializeLabel: function initializeLabel(date) { 
+        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
+        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
+  
+        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
     startClock : function startClock(){
         this.stopClock();
@@ -93,14 +99,15 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         this.HourNeedle='...'.split('');
         this.MinuteNeedle='....'.split('');
         this.SecondNeedle='.....'.split('');
+        this.Surround='1 2 3 4 5 6 7 8 9 10 11 12'.split(' ');
+        self.todayDate = this.initializeLabel(new Date()).split(''); 
+        
         this.NeedleHeight=this.ClockHeight/4.5
         this.NeedleWidth=this.ClockWidth/4.5
         this.XNeedleRelativePosition=-2.5;
         this.YNeedleRelativePosition=-7;
-            
-        this.Surround='1 2 3 4 5 6 7 8 9 10 11 12'.split(' ');
-        this.Split=360/this.Surround.length;
 
+        this.Split=360/this.Surround.length;
 
         this.y=new Array(this.Surround.length);
         this.x=new Array(this.Surround.length);
@@ -113,7 +120,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         this.AddClockElement(this.HourNeedle, 'nHours');
         this.AddClockElement(this.MinuteNeedle, 'nMinutes');
         this.AddClockElement(this.SecondNeedle, 'nSeconds');
-        this.clockDate = ClockDate.create(40, 40, 0.04 )
+        this.clockDate = ClockDate.create(this.ClockWidth * 1.5, this.ClockHeight * 1.5, self.todayDate, 0.04 )
         return self;
     }
 });
@@ -131,12 +138,6 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
     updateCssPosition: function updateCssPosition(htmlElement, x, y) {
         htmlElement.style.left =  x + 'px';
         htmlElement.style.top = y + 'px';
-    },
-    initializeLabel: function initializeLabel(date) { 
-        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
-        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
-  
-        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
     initializePositions :  function initializePositions(labelArray) {
         return labelArray.map((label) => this.position(label));
@@ -181,16 +182,15 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         this.draw(this.currStep);
         this.currStep -= this.speed;
     },
-    create: function create(ClockWidth, ClockHeight, speed ) {
+    create: function create(ClockWidth, ClockHeight, dateArray, speed ) {
         const self = Object.create(this);
 
-        const dateArray = this.initializeLabel(new Date()).split('');
         Object.defineProperty(self, 'clockWidth', {
-            value: ClockWidth * 1.5, 
+            value: ClockWidth, 
             writable: false
         });
         Object.defineProperty(self, 'clockHeight', {
-            value: ClockHeight * 1.5, 
+            value: ClockHeight, 
             writable: false
         });
         Object.defineProperty(self, 'speed', {
