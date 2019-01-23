@@ -182,15 +182,15 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
         this.draw(this.currStep);
         this.currStep -= this.speed;
     },
-    create: function create(ClockWidth, ClockHeight, dateArray, speed ) {
+    create: function create(clockWidth, clockHeight, dateArray, speed ) {
         const self = Object.create(this);
 
         Object.defineProperty(self, 'clockWidth', {
-            value: ClockWidth, 
+            value: clockWidth, 
             writable: false
         });
         Object.defineProperty(self, 'clockHeight', {
-            value: ClockHeight, 
+            value: clockHeight, 
             writable: false
         });
         Object.defineProperty(self, 'speed', {
