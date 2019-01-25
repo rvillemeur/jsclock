@@ -1,9 +1,12 @@
+import MousePosition from './mousemove.js';
+import addEvent from './common.js'
+
 const Clock = Object.assign({}, {
     move :  function move() {
-        const mousePosition = Point.create(window.MousePosition.x + 75,                                            window.MousePosition.y + 75)
-        this.clockDate.update(mousePosition);
-        this.clockSurround.update(mousePosition);
-        this.ClockNeedles.update(mousePosition);
+        const clockPosition = Point.create(MousePosition.x + 75,                                            MousePosition.y + 75)
+        this.clockDate.update(clockPosition);
+        this.clockSurround.update(clockPosition);
+        this.ClockNeedles.update(clockPosition);
 
     },
     startClock : function startClock(){
@@ -20,6 +23,8 @@ const Clock = Object.assign({}, {
             self.clockDate = ClockDate.create(clockWidth * 1.5,                                                   clockHeight * 1.5, speed);
             self.clockSurround = ClockSurround.create(clockWidth,                                                         clockHeight, speed);
             self.ClockNeedles = ClockNeedles.create(clockWidth / 4.5,                                                   clockHeight / 4.5, speed);
+            //self.mousePosition = MousePosition.create()
+            addEvent(document,"mousemove", MousePosition.getPosition);
         return self;
     }
 });
@@ -47,7 +52,7 @@ const ClockCommonTraits = {
         return {point: Point.create(0, 0), html: htmlElement };
     },
     attachHtmlToBody: function attachHtmlToBody(htmlElement) {
-        tagBody = window.document.getElementsByTagName('body')[0];  
+        const tagBody = window.document.getElementsByTagName('body')[0];  
         tagBody.appendChild(htmlElement);
     },
     getNewPosition: function getNewPosition(OriginalpositionList, initPoint, speed, newPositionList) {
@@ -277,3 +282,6 @@ const Point = Object.assign({}, {
         return self;
     }
 });
+
+
+export {Clock as default};

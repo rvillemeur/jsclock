@@ -1,9 +1,12 @@
-window.MousePosition = {x :0, y :0};
 
-MousePosition.getPosition = function(evt) 
-{
-    MousePosition.x = evt.clientX;
-    MousePosition.y = evt.clientY;
+const MousePoint = {
+    getPosition : function getPosition(evt) 
+    {
+        MousePoint.x = evt.clientX;
+        MousePoint.y = evt.clientY;
+    },
+    x:0,
+    y:0
 }
 
-common.addEvent(document,"mousemove",MousePosition.getPosition);
+export {MousePoint as default};
