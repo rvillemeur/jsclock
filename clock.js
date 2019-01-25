@@ -24,7 +24,7 @@ const Clock = Object.assign(Object.create(Object.prototype), {
     }
 });
 
-const ClockDate = Object.assign(Object.create(Object.prototype), {
+const ClockCommonTraits = {
     createHtmlElement: function createHtmlElement(label) {
         const element = window.document.createElement('div');
         
@@ -37,12 +37,6 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
     updateCssPosition: function updateCssPosition(htmlElement, x, y) {
         htmlElement.style.left =  x + 'px';
         htmlElement.style.top = y + 'px';
-    },
-    initializeLabel: function initializeLabel(date) { 
-        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
-        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
-  
-        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
     initializePositions :  function initializePositions(labelArray) {
         return labelArray.map((label) => this.position(label));
@@ -69,6 +63,14 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
+}
+const ClockDate = Object.assign(Object.create(Object.prototype),ClockCommonTraits, {
+    initializeLabel: function initializeLabel(date) { 
+        var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
+        var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
+  
+        return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
+    },
     xOffset: function xOffset(width, currStep, index, split) {
         return width * Math.cos(currStep + index * split);
     },
@@ -118,45 +120,7 @@ const ClockDate = Object.assign(Object.create(Object.prototype), {
     }
 });
 
-const ClockSurround = Object.assign(Object.create(Object.prototype), {
-    createHtmlElement: function createHtmlElement(label) {
-        const element = window.document.createElement('div');
-        
-        element.appendChild(window.document.createTextNode(label));
-        element.style.cssText = "position:absolute";
-        element.classList.add('clock');
-        
-        return element
-    },
-    updateCssPosition: function updateCssPosition(htmlElement, x, y) {
-        htmlElement.style.left =  x + 'px';
-        htmlElement.style.top = y + 'px';
-    },
-    initializePositions :  function initializePositions(labelArray) {
-        return labelArray.map((label) => this.position(label));
-    },
-    position: function position(label) {
-        const htmlElement = this.createHtmlElement(label);
-        this.attachHtmlToBody(htmlElement);
-        return {point: Point.create(0, 0), html: htmlElement };
-    },
-    attachHtmlToBody: function attachHtmlToBody(htmlElement) {
-        tagBody = window.document.getElementsByTagName('body')[0];  
-        tagBody.appendChild(htmlElement);
-    },
-    getNewPosition: function getNewPosition(OriginalpositionList, initPoint, speed, newPositionList) {
-        if (OriginalpositionList.length === 0) {
-            return newPositionList;
-        }
-        const currentPosition = OriginalpositionList.shift();
-        newPositionList.push({point:initPoint, html: currentPosition.html});
-
-        const currentPoint = currentPosition.point
-        const newPoint = currentPoint.addVector(
-            initPoint.getDistance(currentPoint).multiply(speed));
-
-        return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
-    }, 
+const ClockSurround = Object.assign(Object.create(Object.prototype), ClockCommonTraits, {
     xOffset: function xOffset(width, index, split) {
         //-60 degree = -1.0471975512 radian
         return width * Math.cos(-1.0471975512 + index * split);
@@ -205,45 +169,7 @@ const ClockSurround = Object.assign(Object.create(Object.prototype), {
     }
 });
 
-const ClockNeedles = Object.assign(Object.create(Object.prototype), {
-    createHtmlElement: function createHtmlElement(label) {
-        const element = window.document.createElement('div');
-        
-        element.appendChild(window.document.createTextNode(label));
-        element.style.cssText = "position:absolute";
-        element.classList.add('clock');
-        
-        return element
-    },
-    updateCssPosition: function updateCssPosition(htmlElement, x, y) {
-        htmlElement.style.left =  x + 'px';
-        htmlElement.style.top = y + 'px';
-    },
-    initializePositions :  function initializePositions(labelArray) {
-        return labelArray.map((label) => this.position(label));
-    },
-    position: function position(label) {
-        const htmlElement = this.createHtmlElement(label);
-        this.attachHtmlToBody(htmlElement);
-        return {point: Point.create(0, 0), html: htmlElement };
-    },
-    attachHtmlToBody: function attachHtmlToBody(htmlElement) {
-        tagBody = window.document.getElementsByTagName('body')[0];  
-        tagBody.appendChild(htmlElement);
-    },
-    getNewPosition: function getNewPosition(OriginalpositionList, initPoint, speed, newPositionList) {
-        if (OriginalpositionList.length === 0) {
-            return newPositionList;
-        }
-        const currentPosition = OriginalpositionList.shift();
-        newPositionList.push({point:initPoint, html: currentPosition.html});
-
-        const currentPoint = currentPosition.point
-        const newPoint = currentPoint.addVector(
-            initPoint.getDistance(currentPoint).multiply(speed));
-
-        return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
-    }, 
+const ClockNeedles = Object.assign(Object.create(Object.prototype),ClockCommonTraits, {
     xNeedleRelativePosition: function xNeedleRelativePosition() {
         return -2.5;
     },
