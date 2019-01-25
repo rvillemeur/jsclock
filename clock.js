@@ -64,6 +64,7 @@ const ClockCommonTraits = {
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
 }
+
 const ClockDate = Object.assign({}, ClockCommonTraits, {
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
@@ -240,11 +241,7 @@ const ClockNeedles = Object.assign({}, ClockCommonTraits, {
             value: speed, 
             writable: false
         });
-        //circle circumference = 2 * Math.PI * R 
-        // Object.defineProperty(self, 'circleSplit', {
-        //     value: 2 * Math.PI / surroundArray.length, 
-        //     writable: false
-        // });
+
         self.hourPosition = this.initializePositions(HourNeedle);
         self.minutePosition = this.initializePositions(MinuteNeedle);
         self.secondPosition = this.initializePositions(SecondNeedle);
