@@ -259,4 +259,4 @@ const ClockNeedles = Object.assign({}, ClockCommonTraits, {
 
 
 
-export {Clock as default, ClockDate, ClockSurround, ClockNeedles, ClockCommonTraits};
+export {Clock as default, ClockDate as ClockDate, ClockSurround as ClockSurround, ClockNeedles as ClockNeedles, ClockCommonTraits as ClockCommonTraits};
