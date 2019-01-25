@@ -1,18 +1,21 @@
+//import {Clock, ClockDate, ClockSurround, ClockNeedles, ClockCommonTraits} from './clock.js'
+import Point from './point.js'
+
 const { test } = QUnit;
 QUnit.module( "Clock Date", () => {
   test( "initialize clock date", t => {
         t.equal( ClockDate.initializeLabel(new Date('August 19, 1975 23:15:30')), ' MARDI 19 AOUT 1975'
         , "initialize date passed" );
         
-        t.equal( ClockDate.initializePositions(['A','B','c'])
+        t.equal( ClockCommonTraits.initializePositions(['A','B','c'])
                           .map((item) => item.point)
                           .toString()
         , '{x:0.00, y:0.00},{x:0.00, y:0.00},{x:0.00, y:0.00}'
         , "initializePositions passed")
   });
   test( "calculate new position", t => {
-        t.deepEqual(ClockDate.getNewPosition(
-            ClockDate.initializePositions(['A','B','c']),
+        t.deepEqual(Clock.getNewPosition(
+            ClockCommonTraits.initializePositions(['A','B','c']),
                                          Point.create(10.0, 10.0),
                                          0.6,  
                                          [])
