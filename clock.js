@@ -15,14 +15,11 @@ const Clock = Object.assign(Object.create(Object.prototype), {
         clearInterval(this.timer);
     },
 
-    create: function create(value) {
+    create: function create(clockHeight = 40, clockWidth = 40, speed= 0.04) {
         var self = Object.create(this);
-        self.clockHeight = 40;
-        self.clockWidth = 40;
-        self.speed = 0.04;
-        this.clockDate = ClockDate.create(self.clockWidth * 1.5,                                                  self.clockHeight * 1.5, self.speed);
-        this.clockSurround = ClockSurround.create(self.clockWidth,                                                        self.clockHeight, self.speed);
-        this.ClockNeedles = ClockNeedles.create(self.clockWidth / 4.5,                                                  self.clockHeight / 4.5, self.speed);
+            self.clockDate = ClockDate.create(clockWidth * 1.5,                                                   clockHeight * 1.5, speed);
+            self.clockSurround = ClockSurround.create(clockWidth,                                                         clockHeight, speed);
+            self.ClockNeedles = ClockNeedles.create(clockWidth / 4.5,                                                   clockHeight / 4.5, speed);
         return self;
     }
 });
