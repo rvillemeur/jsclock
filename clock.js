@@ -1,4 +1,4 @@
-const Clock = Object.assign(Object.create(Object.prototype), {
+const Clock = Object.assign({}, {
     move :  function move() {
         const mousePosition = Point.create(window.MousePosition.x + 75,                                            window.MousePosition.y + 75)
         this.clockDate.update(mousePosition);
@@ -64,7 +64,7 @@ const ClockCommonTraits = {
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
 }
-const ClockDate = Object.assign(Object.create(Object.prototype),ClockCommonTraits, {
+const ClockDate = Object.assign({}, ClockCommonTraits, {
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
         var monthName = ['JANVIER','FEVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOUT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DECEMBRE'][date.getMonth()];
@@ -120,7 +120,7 @@ const ClockDate = Object.assign(Object.create(Object.prototype),ClockCommonTrait
     }
 });
 
-const ClockSurround = Object.assign(Object.create(Object.prototype), ClockCommonTraits, {
+const ClockSurround = Object.assign({}, ClockCommonTraits, {
     xOffset: function xOffset(width, index, split) {
         //-60 degree = -1.0471975512 radian
         return width * Math.cos(-1.0471975512 + index * split);
@@ -169,7 +169,7 @@ const ClockSurround = Object.assign(Object.create(Object.prototype), ClockCommon
     }
 });
 
-const ClockNeedles = Object.assign(Object.create(Object.prototype),ClockCommonTraits, {
+const ClockNeedles = Object.assign({}, ClockCommonTraits, {
     xNeedleRelativePosition: function xNeedleRelativePosition() {
         return -2.5;
     },
@@ -253,7 +253,7 @@ const ClockNeedles = Object.assign(Object.create(Object.prototype),ClockCommonTr
     }
 });
 
-const Point = Object.assign(Object.create(Object.prototype), {
+const Point = Object.assign({}, {
     toString: function toString() { 
         return '{x:' + (this.x).toFixed(2) + ', ' 
               + 'y:'+ (this.y).toFixed(2) + '}'
