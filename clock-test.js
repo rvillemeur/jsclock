@@ -8,49 +8,49 @@ QUnit.module( "Clock Date", () => {
         , "initialize date passed" );
   });
   test( "Clock date offset", t => {
-      t.equal(Math.round(ClockDate.xOffset(10, 0, 0, Math.PI/3 ))
-          , 10
+      t.equal(Math.round(ClockDate.xOffset(10, 0 ))
+          , 10.0
           , "xOffset at index 0")
-      t.equal(Math.round(ClockDate.xOffset(10, 0, 1, Math.PI/3 ))
-          , 5
-          , "xOffset at index 1")
-      t.equal(Math.round(ClockDate.xOffset(10, 0, 2, Math.PI/4 ))
+      t.equal(Math.round(ClockDate.xOffset(10, Math.PI/2 ))
           , 0.0
+          , "xOffset at index 1")
+      t.equal(Math.round(ClockDate.xOffset(10, Math.PI ))
+          , -10.0
           , "xOffset at index 2")
-      t.equal(Math.round(ClockDate.yOffset(10, 0, 0, Math.PI/3 ))
-          , 0
+      t.equal(Math.round(ClockDate.yOffset(10, 0 ))
+          , 0.0
           , "yOffset at index 0")
-      t.equal(Math.round(ClockDate.yOffset(10, 0, 1, Math.PI/6 ))
-          , 5
+      t.equal(Math.round(ClockDate.yOffset(10, Math.PI/2 ))
+          , 10.0
           , "yOffset at index 1")
-      t.equal(Math.round(ClockDate.yOffset(10, 0, 2, Math.PI/4 ))
-          , 10
+      t.equal(Math.round(ClockDate.yOffset(10, Math.PI ))
+          , 0.0
           , "yOffset at index 2")
   });
 });
 
 QUnit.module( "Clock Surround", () => {
     test( "Clock surround offset", t => {
-        t.equal(Math.round(ClockSurround.xOffset(10, 0, 0))
-            , 5.0
-            , "xOffset at index 0")
-        t.equal(Math.round(ClockSurround.xOffset(10, 1, 0))
-            , 5.0
-            , "xOffset at index 1")
-        t.equal(Math.round(ClockSurround.xOffset(10, 1, 1))
+        t.equal(Math.round(ClockSurround.xOffset(10, 0))
             , 10.0
+            , "xOffset at index 0")
+        t.equal(Math.round(ClockSurround.xOffset(10, Math.PI/2))
+            , 0.0
+            , "xOffset at index 1")
+        t.equal(Math.round(ClockSurround.xOffset(10, Math.PI))
+            , -10.0
             , "xOffset at index 2")
-        t.equal(Math.round(ClockSurround.yOffset(10, 0, 0))
-            , -9.0
+        t.equal(Math.round(ClockSurround.yOffset(10,0))
+            , 0.0
             , "yOffset at index 0")
-        t.equal(Math.round(ClockSurround.yOffset(10, 1, 0))
-            , -9.0
+        t.equal(Math.round(ClockSurround.yOffset(10, Math.PI/2))
+            , 10.0
             , "yOffset at index 1")
-        t.equal(Math.round(ClockSurround.yOffset(10, 1, 1))
+        t.equal(Math.round(ClockSurround.yOffset(10, Math.PI))
             , 0.0
             , "yOffset at index 2")
     });
-  });
+});
 
 QUnit.module( "second needle", () => {
     test( "second needle angle", t => {
@@ -64,7 +64,7 @@ QUnit.module( "second needle", () => {
             , 2.0
             , "angle at 30 seconds")
     });
-  });
+});
 
   QUnit.module( "minute needle", () => {
     test( "minute needle angle", t => {
@@ -78,7 +78,7 @@ QUnit.module( "second needle", () => {
             , 2.0
             , "angle at 30 minutes")
     });
-  });
+});
 
   QUnit.module( "hour needle", () => {
     test( "hour needle angle", t => {
@@ -92,7 +92,7 @@ QUnit.module( "second needle", () => {
             , 2.0
             , "angle at 6:60")
     });
-  });
+});
 
 QUnit.module( "Clock common traits", () => {
     test( "initialize clock date", t => {
@@ -113,7 +113,7 @@ QUnit.module( "Clock common traits", () => {
           , '{x:10.00, y:10.00},{x:-6.00, y:-6.00},{x:3.60, y:3.60}'
           , "get new position passed");
     });
-  });
+});
 
 QUnit.module( "Point", () => {
     test( "Point accessibility", t => {

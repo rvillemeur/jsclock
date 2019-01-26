@@ -111,17 +111,20 @@ const ClockDate = Object.assign({}, ClockCommonTraits, {
   
         return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' +  date.getFullYear();
     },
-    xOffset: function xOffset(width, currStep, index, split) {
-        return width * Math.cos(currStep + index * split);
+    angle: function angle(currStep, index, split) {
+        return currStep + index * split;
     },
-    yOffset: function yOffset (heigth, currStep, index, split) {
-        return heigth * Math.sin(currStep + index * split);
+    xOffset: function xOffset(width, angle) {
+        return width * Math.cos(angle);
+    },
+    yOffset: function yOffset (heigth, angle) {
+        return heigth * Math.sin(angle);
     },
     draw: function draw(currStep) {
         this.positionList.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(this.clockWidth, currStep, index, this.circleSplit),
-                Math.round(position.point.y) + this.yOffset(this.clockHeight, currStep, index, this.circleSplit))
+                Math.round(position.point.x) + this.xOffset(this.clockWidth, this.angle(currStep, index, this.circleSplit)),
+                Math.round(position.point.y) + this.yOffset(this.clockHeight, this.angle(currStep, index, this.circleSplit)))
         })
     }, 
     update: function update(point) {
@@ -161,21 +164,23 @@ const ClockDate = Object.assign({}, ClockCommonTraits, {
 });
 
 const ClockSurround = Object.assign({}, ClockCommonTraits, {
-    xOffset: function xOffset(width, index, split) {
+    angle: function angle(index, split) {
         //-60 degree = -1.0471975512 radian
-        return width * Math.cos(-1.0471975512 + index * split);
+        return -1.0471975512 + index * split;
     },
-    yOffset: function yOffset (heigth, index, split) {
-        //-60 degree = -1.0471975512 radian
-        return heigth * Math.sin(-1.0471975512 + index * split);
+    xOffset: function xOffset(width, angle ) {
+        return width * Math.cos(angle);
+    },
+    yOffset: function yOffset (heigth, angle) {
+        return heigth * Math.sin(angle);
     },
     draw: function draw() {
         this.positionList.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
                 Math.round(position.point.x) 
-                    + this.xOffset(this.clockWidth,  index, this.circleSplit),
+                    + this.xOffset(this.clockWidth,  this.angle(index, this.circleSplit)),
                 Math.round(position.point.y) 
-                    + this.yOffset(this.clockHeight, index, this.circleSplit))
+                    + this.yOffset(this.clockHeight, this.angle(index, this.circleSplit)))
         })
     }, 
     update: function update(point) {
