@@ -73,6 +73,12 @@ const ClockCommonTraits = {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
+    xOffset: function xOffset(width, angle) {
+        return width * Math.cos(angle);
+    },
+    yOffset: function yOffset (heigth, angle) {
+        return heigth * Math.sin(angle);
+    },
 };
 
 const ClockNeedleCommonTraits = {
@@ -82,19 +88,11 @@ const ClockNeedleCommonTraits = {
     yNeedleRelativePosition: function yNeedleRelativePosition() {
         return -7;
     },
-    xOffset: function xOffset(index, date) {
-        return this.xNeedleRelativePosition() 
-            + (index * this.clockWidth) * Math.cos(this.angle(date))
-    },
-    yOffset: function yOffset (index, date) {
-        return this.yNeedleRelativePosition() 
-            + (index * this.clockHeight) * Math.sin(this.angle(date))
-    },
     draw: function draw(date) {
         this.position.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(index, date),
-                Math.round(position.point.y) + this.yOffset(index, date)
+                Math.round(position.point.x) + this.xNeedleRelativePosition()  + this.xOffset(index * this.clockWidth, this.angle(date)),
+                Math.round(position.point.y) + this.yNeedleRelativePosition() + this.yOffset(index * this.clockHeight, this.angle(date))
         )});
     }, 
     update: function update(point) {
@@ -113,12 +111,6 @@ const ClockDate = Object.assign({}, ClockCommonTraits, {
     },
     angle: function angle(currStep, index, split) {
         return currStep + index * split;
-    },
-    xOffset: function xOffset(width, angle) {
-        return width * Math.cos(angle);
-    },
-    yOffset: function yOffset (heigth, angle) {
-        return heigth * Math.sin(angle);
     },
     draw: function draw(currStep) {
         this.positionList.forEach( (position, index) => {
@@ -167,12 +159,6 @@ const ClockSurround = Object.assign({}, ClockCommonTraits, {
     angle: function angle(index, split) {
         //-60 degree = -1.0471975512 radian
         return -1.0471975512 + index * split;
-    },
-    xOffset: function xOffset(width, angle ) {
-        return width * Math.cos(angle);
-    },
-    yOffset: function yOffset (heigth, angle) {
-        return heigth * Math.sin(angle);
     },
     draw: function draw() {
         this.positionList.forEach( (position, index) => {
