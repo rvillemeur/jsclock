@@ -1,4 +1,4 @@
-import {default as Clock, ClockDate, ClockSurround, ClockNeedles, ClockCommonTraits } from './clock.js'
+import {ClockDate, ClockSurround, ClockNeedles, ClockCommonTraits} from './clock.js'
 import Point from './point.js'
 
 const { test } = QUnit;
