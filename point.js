@@ -26,4 +26,4 @@ const Point = Object.assign({}, {
     }
 });
 
-export {Point as default};
+export default Point;
