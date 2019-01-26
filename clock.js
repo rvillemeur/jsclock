@@ -7,7 +7,9 @@ const Clock = Object.assign({}, {
         const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
         this.Date.update(position);
         this.Surround.update(position);
-        this.Needles.update(position);
+        this.NeedlesSecond.update(position);
+        this.NeedlesMinute.update(position);
+        this.NeedlesHour.update(position);
 
     },
     startClock : function startClock(){
@@ -23,7 +25,9 @@ const Clock = Object.assign({}, {
         const self = Object.create(this);
         self.Date = ClockDate.create(clockWidth * 1.5,  clockHeight * 1.5, speed);
         self.Surround = ClockSurround.create(clockWidth, clockHeight, speed);
-        self.Needles = ClockNeedles.create(clockWidth / 4.5, clockHeight / 4.5, speed);
+        self.NeedlesSecond = ClockNeedlesSecond.create(clockWidth / 4.5, clockHeight / 4.5, speed);
+        self.NeedlesMinute = ClockNeedlesMinute.create(clockWidth / 4.5, clockHeight / 4.5, speed);
+        self.NeedlesHour = ClockNeedlesHour.create(clockWidth / 4.5, clockHeight / 4.5, speed);
 
         addEvent(document,"mousemove", MousePosition.getPosition);
         return self;
@@ -71,6 +75,34 @@ const ClockCommonTraits = {
     }, 
 }
 
+const ClockNeedleCommonTraits = {
+    xNeedleRelativePosition: function xNeedleRelativePosition() {
+        return -2.5;
+    },
+    yNeedleRelativePosition: function yNeedleRelativePosition() {
+        return -7;
+    },
+    xOffset: function xOffset(index, date, needleAngle) {
+        return this.xNeedleRelativePosition() 
+            + (index * this.clockWidth) * Math.cos(needleAngle(date))
+    },
+    yOffset: function yOffset (index, date, needleAngle) {
+        return this.yNeedleRelativePosition() 
+            + (index * this.clockHeight) * Math.sin(needleAngle(date))
+    },
+    draw: function draw(date) {
+        this.position.forEach( (position, index) => {
+            this.updateCssPosition(position.html, 
+                Math.round(position.point.x) + this.xOffset(index, date, this.angle),
+                Math.round(position.point.y) + this.yOffset(index, date, this.angle)
+        )});
+    }, 
+    update: function update(point) {
+       this.position = this.getNewPosition(this.position, 
+                                                point,                          this.speed, []);
+        this.draw(new Date ());
+    }
+}
 const ClockDate = Object.assign({}, ClockCommonTraits, {
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
@@ -176,64 +208,38 @@ const ClockSurround = Object.assign({}, ClockCommonTraits, {
     }
 });
 
-const ClockNeedles = Object.assign({}, ClockCommonTraits, {
-    xNeedleRelativePosition: function xNeedleRelativePosition() {
-        return -2.5;
-    },
-    yNeedleRelativePosition: function yNeedleRelativePosition() {
-        return -7;
-    },
-    secondAngle: function secondAngle(date) {
+const ClockNeedlesSecond = Object.assign({}, ClockCommonTraits, ClockNeedleCommonTraits, {
+    angle: function angle(date) {
         return (-Math.PI / 2) + (Math.PI * date.getSeconds() / 30);
-    },
-    minuteAngle: function minuteAngle(date) {
-        return  (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30);
-    },
-    hourAngle: function hourAngle(date) {
-        const minuteOffset = Math.PI * parseInt(date.getMinutes()) / 360
-        return (-Math.PI / 2) + (Math.PI * date.getHours() / 6) + minuteOffset;
-    },
-    xOffset: function xOffset(index, date, needleAngle) {
-        return this.xNeedleRelativePosition() 
-            + (index * this.clockWidth) * Math.cos(needleAngle(date))
-    },
-    yOffset: function yOffset (index, date, needleAngle) {
-        return this.yNeedleRelativePosition() 
-            + (index * this.clockHeight) * Math.sin(needleAngle(date))
-    },
-    draw: function draw(date) {
-        this.hourPosition.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                                   Math.round(position.point.x) 
-                                   + this.xOffset(index, date, this.hourAngle),
-                                   Math.round(position.point.y) + this.yOffset(index, date, this.hourAngle)
-        )});
-        this.minutePosition.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(index, date, this.minuteAngle),
-                Math.round(position.point.y) + this.yOffset(index, date, this.minuteAngle)
-        )});
-        this.secondPosition.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(index, date, this.secondAngle),
-                Math.round(position.point.y) + this.yOffset(index, date, this.secondAngle)
-        )});
-    }, 
-    update: function update(point) {
-        this.hourPosition = this.getNewPosition(this.hourPosition, 
-                                                point,                          this.speed, []);
-        this.minutePosition = this.getNewPosition(this.minutePosition, 
-                                                point,                          this.speed, []); 
-       this.secondPosition = this.getNewPosition(this.secondPosition, 
-                                                point,                          this.speed, []);
-        this.draw(new Date ());
     },
     create: function create(clockWidth, clockHeight, speed ) {
         const self = Object.create(this);
 
-        const HourNeedle = '...'.split('');
-        const MinuteNeedle ='....'.split('');
-        const SecondNeedle ='.....'.split('');
+        Object.defineProperty(self, 'clockWidth', {
+            value: clockWidth, 
+            writable: false
+        });
+        Object.defineProperty(self, 'clockHeight', {
+            value: clockHeight, 
+            writable: false
+        });
+        Object.defineProperty(self, 'speed', {
+            value: speed, 
+            writable: false
+        });
+        self.position = this.initializePositions('.....'.split(''));
+        
+        return self;
+    }
+});
+
+const ClockNeedlesHour = Object.assign({}, ClockCommonTraits, ClockNeedleCommonTraits, {
+    angle: function angle(date) {
+        const minuteOffset = Math.PI * parseInt(date.getMinutes()) / 360
+        return (-Math.PI / 2) + (Math.PI * date.getHours() / 6) + minuteOffset;
+    },
+    create: function create(clockWidth, clockHeight, speed ) {
+        const self = Object.create(this);
 
         Object.defineProperty(self, 'clockWidth', {
             value: clockWidth, 
@@ -248,13 +254,36 @@ const ClockNeedles = Object.assign({}, ClockCommonTraits, {
             writable: false
         });
 
-        self.hourPosition = this.initializePositions(HourNeedle);
-        self.minutePosition = this.initializePositions(MinuteNeedle);
-        self.secondPosition = this.initializePositions(SecondNeedle);
+        self.position = this.initializePositions('...'.split(''));
+
+        return self;
+    }
+});
+
+const ClockNeedlesMinute = Object.assign({}, ClockCommonTraits, ClockNeedleCommonTraits, {
+    angle: function angle(date) {
+        return  (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30);
+    },
+    create: function create(clockWidth, clockHeight, speed ) {
+        const self = Object.create(this);
+
+        Object.defineProperty(self, 'clockWidth', {
+            value: clockWidth, 
+            writable: false
+        });
+        Object.defineProperty(self, 'clockHeight', {
+            value: clockHeight, 
+            writable: false
+        });
+        Object.defineProperty(self, 'speed', {
+            value: speed, 
+            writable: false
+        });
+
+        self.position = this.initializePositions('....'.split(''));
         
         return self;
     }
 });
 
-
-export {Clock as default, ClockDate, ClockSurround, ClockNeedles, ClockCommonTraits };
+export {Clock as default, ClockDate, ClockSurround, ClockNeedlesSecond, ClockNeedlesHour, ClockNeedlesMinute, ClockCommonTraits };
