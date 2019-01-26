@@ -4,28 +4,28 @@ import Point from './point.js'
 
 const Clock = Object.assign({}, {
     move :  function move() {
-        const clockPosition = Point.create(MousePosition.x + 75,                                            MousePosition.y + 75)
-        this.clockDate.update(clockPosition);
-        this.clockSurround.update(clockPosition);
-        this.ClockNeedles.update(clockPosition);
+        const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
+        this.Date.update(position);
+        this.Surround.update(position);
+        this.Needles.update(position);
 
     },
     startClock : function startClock(){
         this.stopClock();
-        var self = this;
-        self.timer = setInterval(function(){self.move()},20);
+        const self = this;
+        self.timer = setInterval(() => {self.move()},20);
     },
     stopClock : function stopClock() {
         clearInterval(this.timer);
     },
 
     create: function create(clockHeight = 40, clockWidth = 40, speed= 0.04) {
-        var self = Object.create(this);
-            self.clockDate = ClockDate.create(clockWidth * 1.5,                                                   clockHeight * 1.5, speed);
-            self.clockSurround = ClockSurround.create(clockWidth,                                                         clockHeight, speed);
-            self.ClockNeedles = ClockNeedles.create(clockWidth / 4.5,                                                   clockHeight / 4.5, speed);
-            //self.mousePosition = MousePosition.create()
-            addEvent(document,"mousemove", MousePosition.getPosition);
+        const self = Object.create(this);
+        self.Date = ClockDate.create(clockWidth * 1.5,  clockHeight * 1.5, speed);
+        self.Surround = ClockSurround.create(clockWidth, clockHeight, speed);
+        self.Needles = ClockNeedles.create(clockWidth / 4.5, clockHeight / 4.5, speed);
+
+        addEvent(document,"mousemove", MousePosition.getPosition);
         return self;
     }
 });
