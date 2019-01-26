@@ -73,7 +73,7 @@ const ClockCommonTraits = {
 
         return getNewPosition(OriginalpositionList, newPoint, speed, newPositionList)
     }, 
-}
+};
 
 const ClockNeedleCommonTraits = {
     xNeedleRelativePosition: function xNeedleRelativePosition() {
@@ -82,19 +82,19 @@ const ClockNeedleCommonTraits = {
     yNeedleRelativePosition: function yNeedleRelativePosition() {
         return -7;
     },
-    xOffset: function xOffset(index, date, needleAngle) {
+    xOffset: function xOffset(index, date) {
         return this.xNeedleRelativePosition() 
-            + (index * this.clockWidth) * Math.cos(needleAngle(date))
+            + (index * this.clockWidth) * Math.cos(this.angle(date))
     },
-    yOffset: function yOffset (index, date, needleAngle) {
+    yOffset: function yOffset (index, date) {
         return this.yNeedleRelativePosition() 
-            + (index * this.clockHeight) * Math.sin(needleAngle(date))
+            + (index * this.clockHeight) * Math.sin(this.angle(date))
     },
     draw: function draw(date) {
         this.position.forEach( (position, index) => {
             this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(index, date, this.angle),
-                Math.round(position.point.y) + this.yOffset(index, date, this.angle)
+                Math.round(position.point.x) + this.xOffset(index, date),
+                Math.round(position.point.y) + this.yOffset(index, date)
         )});
     }, 
     update: function update(point) {
@@ -102,7 +102,8 @@ const ClockNeedleCommonTraits = {
                                                 point,                          this.speed, []);
         this.draw(new Date ());
     }
-}
+};
+
 const ClockDate = Object.assign({}, ClockCommonTraits, {
     initializeLabel: function initializeLabel(date) { 
         var dayName = ['DIMANCHE','LUNDI','MARDI','MERCREDI','JEUDI','VENDREDI','SAMEDI'][date.getDay()];
@@ -286,4 +287,4 @@ const ClockNeedlesMinute = Object.assign({}, ClockCommonTraits, ClockNeedleCommo
     }
 });
 
-export {Clock as default, ClockDate, ClockSurround, ClockNeedlesSecond, ClockNeedlesHour, ClockNeedlesMinute, ClockCommonTraits };
+export {Clock as default, ClockDate, ClockSurround, ClockNeedlesSecond, ClockNeedlesHour, ClockNeedlesMinute, ClockCommonTraits, ClockNeedleCommonTraits };
