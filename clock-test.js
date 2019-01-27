@@ -7,49 +7,6 @@ QUnit.module( "Clock Date", () => {
         t.equal( ClockDate.initializeLabel(new Date('August 19, 1975 23:15:30')), ' MARDI 19 AOUT 1975'
         , "initialize date passed" );
   });
-  test( "Clock date offset", t => {
-      t.equal(Math.round(ClockDate.xOffset(10, 0 ))
-          , 10.0
-          , "xOffset at index 0")
-      t.equal(Math.round(ClockDate.xOffset(10, Math.PI/2 ))
-          , 0.0
-          , "xOffset at index 1")
-      t.equal(Math.round(ClockDate.xOffset(10, Math.PI ))
-          , -10.0
-          , "xOffset at index 2")
-      t.equal(Math.round(ClockDate.yOffset(10, 0 ))
-          , 0.0
-          , "yOffset at index 0")
-      t.equal(Math.round(ClockDate.yOffset(10, Math.PI/2 ))
-          , 10.0
-          , "yOffset at index 1")
-      t.equal(Math.round(ClockDate.yOffset(10, Math.PI ))
-          , 0.0
-          , "yOffset at index 2")
-  });
-});
-
-QUnit.module( "Clock Surround", () => {
-    test( "Clock surround offset", t => {
-        t.equal(Math.round(ClockSurround.xOffset(10, 0))
-            , 10.0
-            , "xOffset at index 0")
-        t.equal(Math.round(ClockSurround.xOffset(10, Math.PI/2))
-            , 0.0
-            , "xOffset at index 1")
-        t.equal(Math.round(ClockSurround.xOffset(10, Math.PI))
-            , -10.0
-            , "xOffset at index 2")
-        t.equal(Math.round(ClockSurround.yOffset(10,0))
-            , 0.0
-            , "yOffset at index 0")
-        t.equal(Math.round(ClockSurround.yOffset(10, Math.PI/2))
-            , 10.0
-            , "yOffset at index 1")
-        t.equal(Math.round(ClockSurround.yOffset(10, Math.PI))
-            , 0.0
-            , "yOffset at index 2")
-    });
 });
 
 QUnit.module( "second needle", () => {
@@ -112,6 +69,30 @@ QUnit.module( "Clock common traits", () => {
                        .toString()
           , '{x:10.00, y:10.00},{x:-6.00, y:-6.00},{x:3.60, y:3.60}'
           , "get new position passed");
+    });
+    test( "Clock  offset", t => {
+        t.equal(Math.round(ClockCommonTraits.xOffset(10, 0))
+            , 10.0
+            , "xOffset at index 0")
+        t.equal(Math.round(ClockCommonTraits.xOffset(10, Math.PI/2))
+            , 0.0
+            , "xOffset at index 1")
+        t.equal(Math.round(ClockCommonTraits.xOffset(10, Math.PI))
+            , -10.0
+            , "xOffset at index 2")
+        t.equal(Math.round(ClockCommonTraits.yOffset(10,0))
+            , 0.0
+            , "yOffset at index 0")
+        t.equal(Math.round(ClockCommonTraits.yOffset(10, Math.PI/2))
+            , 10.0
+            , "yOffset at index 1")
+        t.equal(Math.round(ClockCommonTraits.yOffset(10, Math.PI))
+            , 0.0
+            , "yOffset at index 2")
+    });
+    test( "test angle", t => {
+        t.equal( ClockCommonTraits.angle(-60 * Math.PI/180, 0, 0), -60 * Math.PI/180
+        , "angle test passed");
     });
 });
 
