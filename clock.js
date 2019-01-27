@@ -79,6 +79,11 @@ const ClockCommonTraits = {
     yOffset: function yOffset (heigth, angle) {
         return heigth * Math.sin(angle);
     },
+    draw: function draw() {
+        this.positionList.forEach( (position, index) => {
+            this.updateCssPosition(position.html, this.x(position, index), this.y(position, index))
+        })
+    }, 
 };
 
 const ClockNeedleCommonTraits = {
@@ -88,12 +93,16 @@ const ClockNeedleCommonTraits = {
     yNeedleRelativePosition: function yNeedleRelativePosition() {
         return -7;
     },
+    x: function x(position, index, date) {
+        return Math.round(position.point.x) + this.xNeedleRelativePosition()  + this.xOffset(index * this.clockWidth, this.angle(date));
+    },
+    y: function y(position, index, date) {
+        return Math.round(position.point.y) + this.yNeedleRelativePosition() + this.yOffset(index * this.clockHeight, this.angle(date));
+    },
     draw: function draw(date) {
         this.position.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xNeedleRelativePosition()  + this.xOffset(index * this.clockWidth, this.angle(date)),
-                Math.round(position.point.y) + this.yNeedleRelativePosition() + this.yOffset(index * this.clockHeight, this.angle(date))
-        )});
+            this.updateCssPosition(position.html, this.x(position, index, date), this.y(position, index, date))
+        });
     }, 
     update: function update(point) {
        this.position = this.getNewPosition(this.position, 
@@ -112,16 +121,15 @@ const ClockDate = Object.assign({}, ClockCommonTraits, {
     angle: function angle(currStep, index, split) {
         return currStep + index * split;
     },
-    draw: function draw(currStep) {
-        this.positionList.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                Math.round(position.point.x) + this.xOffset(this.clockWidth, this.angle(currStep, index, this.circleSplit)),
-                Math.round(position.point.y) + this.yOffset(this.clockHeight, this.angle(currStep, index, this.circleSplit)))
-        })
-    }, 
+    x: function x(position, index) {
+        return Math.round(position.point.x) + this.xOffset(this.clockWidth, this.angle(this.currStep, index, this.circleSplit));
+    },
+    y: function y(position, index) {
+        return Math.round(position.point.y) + this.yOffset(this.clockHeight, this.angle(this.currStep, index, this.circleSplit));
+    },
     update: function update(point) {
         this.positionList = this.getNewPosition(this.positionList, point, this.speed, []);
-        this.draw(this.currStep);
+        this.draw();
         this.currStep -= this.speed;
     },
     create: function create(clockWidth, clockHeight, speed ) {
@@ -160,15 +168,14 @@ const ClockSurround = Object.assign({}, ClockCommonTraits, {
         //-60 degree = -1.0471975512 radian
         return -1.0471975512 + index * split;
     },
-    draw: function draw() {
-        this.positionList.forEach( (position, index) => {
-            this.updateCssPosition(position.html, 
-                Math.round(position.point.x) 
-                    + this.xOffset(this.clockWidth,  this.angle(index, this.circleSplit)),
-                Math.round(position.point.y) 
-                    + this.yOffset(this.clockHeight, this.angle(index, this.circleSplit)))
-        })
-    }, 
+    x: function x(position, index) {
+        return Math.round(position.point.x) 
+        + this.xOffset(this.clockWidth,  this.angle(index, this.circleSplit));
+    },
+    y: function y(position, index) {
+        return Math.round(position.point.y) 
+        + this.yOffset(this.clockHeight, this.angle(index, this.circleSplit));
+    },
     update: function update(point) {
         this.positionList = this.getNewPosition(this.positionList, point, this.speed, []);
         this.draw();
