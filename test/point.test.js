@@ -1,5 +1,5 @@
 import Point from '../point.js'
-var assert = require('assert');
+import assert from 'assert';
 
 describe('Point accessibility', function() {
   describe('#Point.create', function() {
