@@ -1,4 +1,4 @@
-import Point from '../point.js'
+import Point from '../src/point.js'
 import assert from 'assert'
 
 describe('Point accessibility', function () {
