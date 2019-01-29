@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs')
 
 module.exports = {
   mode: 'development',
@@ -8,7 +8,6 @@ module.exports = {
     publicPath: 'dist'
   },
   devServer: {
-    https: true,
     https: {
       key: fs.readFileSync('C://devzone//ssl//server.key'),
       cert: fs.readFileSync('C://devzone//ssl//server.crt'),
@@ -16,7 +15,7 @@ module.exports = {
     },
     index: 'Clock.html',
     port: 8081
-  },
+  }
   // module: {
   //   rules: [
   //     {
@@ -31,4 +30,4 @@ module.exports = {
   //     }
   //   ]
   // }
-};
+}
