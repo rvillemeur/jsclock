@@ -95,28 +95,3 @@ QUnit.module('Clock common traits', () => {
       , 'angle test passed')
   })
 })
-
-QUnit.module('Point', () => {
-  test('Point accessibility', t => {
-    t.equal(Point.create(10.0, 10.0).toString(),
-      '{x:10.00, y:10.00}',
-      'initialize Point passed')
-  })
-  test('Point method', t => {
-    t.equal(Point.create(10.0, 10.0).getDistance(Point.create(15.0, 15.0)).toString()
-      , '{x:5.00, y:5.00}'
-      , 'get distance between point passed')
-
-    t.equal(Point.create(10.0, 10.0).addVector(Point.create(15.0, 15.0)).toString()
-      , '{x:25.00, y:25.00}'
-      , 'add vector to a point passed')
-
-    t.equal(Point.create(10.0, 10.0).multiply(0.6).toString()
-      , '{x:6.00, y:6.00}'
-      , 'multiply point coordinate passed')
-
-    t.equal(Point.create(10.4, 10.4).round().toString()
-      , '{x:10.00, y:10.00}'
-      , 'add vector to a point passed')
-  })
-})
