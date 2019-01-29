@@ -2,9 +2,9 @@ const fs = require('fs')
 
 module.exports = {
   mode: 'development',
-  entry: './main.js',
+  entry: './src/main.js',
   output: {
-    filename: 'main.js',
+    filename: 'bundle.js',
     publicPath: 'dist'
   },
   devServer: {
