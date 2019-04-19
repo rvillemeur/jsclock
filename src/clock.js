@@ -1,11 +1,12 @@
 import MousePosition from './mousemove.js'
 import addEvent from './common.js'
 import Point from './point.js'
+import ClockDate from './clockDate.js'
 
 const Clock = Object.assign({}, {
   move: function move () {
     const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
-    this.Date.update(position)
+    this.Date.move(position)
     this.Surround.update(position)
     this.NeedlesSecond.update(position)
     this.NeedlesMinute.update(position)
@@ -22,7 +23,7 @@ const Clock = Object.assign({}, {
 
   create: function create (clockHeight = 40, clockWidth = 40, speed = 0.04) {
     const self = Object.create(this)
-    self.Date = ClockDate.create(clockWidth * 1.5, clockHeight * 1.5, speed)
+    self.Date = ClockDate.create(window, clockWidth * 1.5, clockHeight * 1.5, speed)
     self.Surround = ClockSurround.create(clockWidth, clockHeight, speed)
     self.NeedlesSecond = ClockNeedlesSecond.create(clockWidth / 4.5, clockHeight / 4.5, speed)
     self.NeedlesMinute = ClockNeedlesMinute.create(clockWidth / 4.5, clockHeight / 4.5, speed)
@@ -48,7 +49,7 @@ const ClockCommonTraits = {
     htmlElement.style.top = y + 'px'
   },
   initializePositions: function initializePositions (labelArray) {
-    return labelArray.map((label) => this.position(label))
+    return labelArray.map(label => this.position(label))
   },
   position: function position (label) {
     const htmlElement = this.createHtmlElement(label)
@@ -124,47 +125,6 @@ const ClockNeedleCommonTraits = {
     this.draw(new Date())
   }
 }
-
-const ClockDate = Object.assign({}, ClockCommonTraits, {
-  initializeLabel: function initializeLabel (date) {
-    var dayName = ['DIMANCHE', 'LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI'][date.getDay()]
-    var monthName = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'][date.getMonth()]
-
-    return ' ' + dayName + ' ' + date.getDate() + ' ' + monthName + ' ' + date.getFullYear()
-  },
-  updateCurrStep: function updateCurrStep () {
-    this.currStep -= this.speed
-  },
-  create: function create (clockWidth, clockHeight, speed) {
-    const self = Object.create(this)
-
-    const dateArray = this.initializeLabel(new Date()).split('')
-    Object.defineProperty(self, 'clockWidth', {
-      value: clockWidth,
-      writable: false
-    })
-    Object.defineProperty(self, 'clockHeight', {
-      value: clockHeight,
-      writable: false
-    })
-    Object.defineProperty(self, 'speed', {
-      value: speed,
-      writable: false
-    })
-    Object.defineProperty(self, 'currStep', {
-      value: 0,
-      writable: true
-    })
-    // circle circumference = 2 * Math.PI * R
-    Object.defineProperty(self, 'circleSplit', {
-      value: 2 * Math.PI / dateArray.length,
-      writable: false
-    })
-    self.positionList = this.initializePositions(dateArray)
-
-    return self
-  }
-})
 
 const ClockSurround = Object.assign({}, ClockCommonTraits, {
   updateCurrStep: function updateCurrStep () {
