@@ -6,11 +6,11 @@ import ClockDate from './clockDate.js'
 const Clock = Object.assign({}, {
   move: function move () {
     const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
-    this.Date.move(position)
-    this.Surround.update(position)
-    this.NeedlesSecond.update(position)
-    this.NeedlesMinute.update(position)
-    this.NeedlesHour.update(position)
+    this.date.move(position)
+    this.surround.update(position)
+    this.needlesSecond.update(position)
+    this.needlesMinute.update(position)
+    this.needlesHour.update(position)
   },
   startClock: function startClock () {
     this.stopClock()
@@ -23,11 +23,26 @@ const Clock = Object.assign({}, {
 
   create: function create (clockHeight = 40, clockWidth = 40, speed = 0.04) {
     const self = Object.create(this)
-    self.Date = ClockDate.create(window, clockWidth * 1.5, clockHeight * 1.5, speed)
-    self.Surround = ClockSurround.create(clockWidth, clockHeight, speed)
-    self.NeedlesSecond = ClockNeedlesSecond.create(clockWidth / 4.5, clockHeight / 4.5, speed)
-    self.NeedlesMinute = ClockNeedlesMinute.create(clockWidth / 4.5, clockHeight / 4.5, speed)
-    self.NeedlesHour = ClockNeedlesHour.create(clockWidth / 4.5, clockHeight / 4.5, speed)
+    Object.defineProperty(self, 'date', {
+      value: ClockDate.create(window, clockWidth * 1.5, clockHeight * 1.5, speed),
+      writable: false
+    })
+    Object.defineProperty(self, 'surround', {
+      value: ClockSurround.create(clockWidth, clockHeight, speed),
+      writable: false
+    })
+    Object.defineProperty(self, 'needlesSecond', {
+      value: ClockNeedlesSecond.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      writable: false
+    })
+    Object.defineProperty(self, 'needlesMinute', {
+      value: ClockNeedlesMinute.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      writable: false
+    })
+    Object.defineProperty(self, 'needlesHour', {
+      value: ClockNeedlesHour.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      writable: false
+    })
 
     addEvent(document, 'mousemove', MousePosition.getPosition)
     return self
