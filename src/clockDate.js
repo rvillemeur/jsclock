@@ -61,6 +61,8 @@ const ClockDateModel = Object.assign(Object.create(Object.prototype), {
     this.clockWidth(clockWidth)
     this.clockHeight(clockHeight)
     this.speed(speed)
+
+    return this
   },
   create: function () {
     var self = Object.create(this)
@@ -147,6 +149,8 @@ var ClockDateView = Object.assign(Object.create(Object.prototype), {
   },
   initialize: function (display, labelArray) {
     this.elementList(this.initializeHtmlElements(display, labelArray))
+
+    return this
   },
   create: function create (display, labelArray) {
     var self = Object.create(this)
@@ -172,13 +176,11 @@ const ClockDate = Object.assign({}, {
     this.view().updatePosition(model.getDisplayPosition(model.positionArray()))
   },
   initialize: function (display, clockWidth, clockHeight, speed) {
-    const model = ClockDateModel.create()
-    model.initialize(clockWidth, clockHeight, speed)
-    this.model(model)
+    this.model(ClockDateModel.create().initialize(clockWidth, clockHeight, speed))
 
-    const view = ClockDateView.create()
-    view.initialize(display, this.model().labelArray())
-    this.view(view)
+    this.view(ClockDateView.create().initialize(display, this.model().labelArray()))
+
+    return this
   },
   create: function () {
     var self = Object.create(this)

@@ -39,8 +39,8 @@ const Clock = Object.assign({}, {
       return _speed
     }
 
-    const _date = ClockDate.create()
-    _date.initialize(window, _clockWidth * 1.5, _clockHeight * 1.5, _speed)
+    const _date = ClockDate.create().initialize(window, _clockWidth * 1.5, _clockHeight * 1.5, _speed)
+    // _date.initialize(window, _clockWidth * 1.5, _clockHeight * 1.5, _speed)
     self.date = () => { return _date }
 
     const _surround = ClockSurround.create(_clockWidth, _clockHeight, _speed)
