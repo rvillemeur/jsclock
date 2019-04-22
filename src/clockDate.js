@@ -57,7 +57,12 @@ const ClockDateModel = Object.assign(Object.create(Object.prototype), {
   updateCurrStep: function () {
     this.currStep(this.currStep() - this.speed())
   },
-  create: function (clockWidth, clockHeight, speed) {
+  initialize: function (clockWidth, clockHeight, speed) {
+    this.clockWidth(clockWidth)
+    this.clockHeight(clockHeight)
+    this.speed(speed)
+  },
+  create: function () {
     var self = Object.create(this)
 
     const _labelArray = self.initializeLabel(new Date()).split('')
@@ -66,14 +71,32 @@ const ClockDateModel = Object.assign(Object.create(Object.prototype), {
     const _circleSplit = 2 * Math.PI / _labelArray.length
     self.circleSplit = () => { return _circleSplit }
 
-    const _clockWidth = clockWidth
-    self.clockWidth = () => { return _clockWidth }
+    var _clockWidth = 0
+    self.clockWidth = function (clockWidth) {
+      if (arguments.length > 0) {
+        _clockWidth = clockWidth
+      } else {
+        return _clockWidth
+      }
+    }
 
-    const _clockHeight = clockHeight
-    self.clockHeight = () => { return _clockHeight }
+    var _clockHeight = 0
+    self.clockHeight = function (clockHeight) {
+      if (arguments.length > 0) {
+        _clockHeight = clockHeight
+      } else {
+        return _clockHeight
+      }
+    }
 
-    const _speed = speed
-    self.speed = () => { return _speed }
+    var _speed = 0
+    self.speed = function (speed) {
+      if (arguments.length > 0) {
+        _speed = speed
+      } else {
+        return _speed
+      }
+    }
 
     var _currStep = 0
     self.currStep = function (currStep) {
@@ -122,11 +145,20 @@ var ClockDateView = Object.assign(Object.create(Object.prototype), {
       this.updateCssPosition(element, position.x, position.y)
     })
   },
+  initialize: function (display, labelArray) {
+    this.elementList(this.initializeHtmlElements(display, labelArray))
+  },
   create: function create (display, labelArray) {
     var self = Object.create(this)
 
-    const _elementList = self.initializeHtmlElements(display, labelArray)
-    self.elementList = () => { return _elementList }
+    var _elementList = []
+    self.elementList = function (elementList) {
+      if (arguments.length > 0) {
+        _elementList = elementList
+      } else {
+        return _elementList
+      }
+    }
 
     return self
   }
@@ -139,14 +171,35 @@ const ClockDate = Object.assign({}, {
     model.update(point)
     this.view().updatePosition(model.getDisplayPosition(model.positionArray()))
   },
-  create: function (display, clockWidth, clockHeight, speed) {
+  initialize: function (display, clockWidth, clockHeight, speed) {
+    const model = ClockDateModel.create()
+    model.initialize(clockWidth, clockHeight, speed)
+    this.model(model)
+
+    const view = ClockDateView.create()
+    view.initialize(display, this.model().labelArray())
+    this.view(view)
+  },
+  create: function () {
     var self = Object.create(this)
 
-    const _model = ClockDateModel.create(clockWidth, clockHeight, speed)
-    self.model = () => { return _model }
+    var _model = {}
+    self.model = function (model) {
+      if (arguments.length > 0) {
+        _model = model
+      } else {
+        return _model
+      }
+    }
 
-    const _view = ClockDateView.create(display, _model.labelArray())
-    self.view = () => { return _view }
+    var _view = {}
+    self.view = function (view) {
+      if (arguments.length > 0) {
+        _view = view
+      } else {
+        return _view
+      }
+    }
 
     return self
   }
