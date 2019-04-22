@@ -2,7 +2,7 @@
 import Point from './point.js'
 
 const ClockDateModel = Object.assign(Object.create(Object.prototype), {
-  initializeLabel: function initializeLabel (date) {
+  initializeLabel: function (date) {
     const dayName = ['DIMANCHE', 'LUNDI', 'MARDI', 'MERCREDI', 'JEUDI', 'VENDREDI', 'SAMEDI'][date.getDay()]
     const monthName = ['JANVIER', 'FEVRIER', 'MARS', 'AVRIL', 'MAI', 'JUIN', 'JUILLET', 'AOUT', 'SEPTEMBRE', 'OCTOBRE', 'NOVEMBRE', 'DECEMBRE'][date.getMonth()]
     const dayNumber = date.getDate()
@@ -10,14 +10,14 @@ const ClockDateModel = Object.assign(Object.create(Object.prototype), {
 
     return ` ${dayName} ${dayNumber} ${monthName} ${year}`
   },
-  initializePositions: function initializePositions (labelArray) {
+  initializePositions: function (labelArray) {
     return labelArray.map((label) => Point.create(0, 0))
   },
+  // this signature is needed because it's a recursive function.
   getNewPosition: function getNewPosition (OriginalpositionArray, initPoint, speed, newPositionArray) {
     if (OriginalpositionArray.length === 0) {
       return newPositionArray
     }
-    // get an array [label, point]
     const currentPoint = OriginalpositionArray.shift()
     newPositionArray.push(initPoint)
 
@@ -26,68 +26,72 @@ const ClockDateModel = Object.assign(Object.create(Object.prototype), {
 
     return getNewPosition(OriginalpositionArray, newPoint, speed, newPositionArray)
   },
-  update: function update (point) {
-    this.positionArray = this.getNewPosition(this.positionArray, point, this.speed, [])
+  update: function (point) {
+    const newPositionArray = this.getNewPosition(this.positionArray(), point, this.speed(), [])
+    this.positionArray(newPositionArray)
     this.updateCurrStep()
   },
-  getDisplayPosition: function getDisplayPosition (positionArray) {
+  getDisplayPosition: function (positionArray) {
     const pos = positionArray.map((position, index) => {
       return Point.create(this.x(position, index), this.y(position, index))
     })
     return pos
   },
-  xOffset: function xOffset (width, angle) {
+  xOffset: function (width, angle) {
     return width * Math.cos(angle)
   },
-  yOffset: function yOffset (heigth, angle) {
+  yOffset: function (heigth, angle) {
     return heigth * Math.sin(angle)
   },
-  angle: function angle (currStep, index, split) {
+  angle: function (currStep, index, split) {
     return currStep + index * split
   },
-  x: function x (position, index) {
+  x: function (position, index) {
     return Math.round(position.x) +
-            this.xOffset(this.clockWidth, this.angle(this.currStep, index, this.circleSplit))
+            this.xOffset(this.clockWidth(), this.angle(this.currStep(), index, this.circleSplit()))
   },
-  y: function y (position, index) {
+  y: function (position, index) {
     return Math.round(position.y) +
-            this.yOffset(this.clockHeight, this.angle(this.currStep, index, this.circleSplit))
+            this.yOffset(this.clockHeight(), this.angle(this.currStep(), index, this.circleSplit()))
   },
-  updateCurrStep: function updateCurrStep () {
-    this.currStep -= this.speed
+  updateCurrStep: function () {
+    this.currStep(this.currStep() - this.speed())
   },
-  create: function create (clockWidth, clockHeight, speed) {
+  create: function (clockWidth, clockHeight, speed) {
     var self = Object.create(this)
 
-    Object.defineProperty(self, 'labelArray', {
-      value: this.initializeLabel(new Date()).split(''),
-      writable: true
-    })
-    Object.defineProperty(self, 'clockWidth', {
-      value: clockWidth,
-      writable: false
-    })
-    Object.defineProperty(self, 'clockHeight', {
-      value: clockHeight,
-      writable: false
-    })
-    Object.defineProperty(self, 'speed', {
-      value: speed,
-      writable: false
-    })
-    Object.defineProperty(self, 'currStep', {
-      value: 0,
-      writable: true
-    })
-    // circle circumference = 2 * Math.PI * R
-    Object.defineProperty(self, 'circleSplit', {
-      value: 2 * Math.PI / self.labelArray.length,
-      writable: false
-    })
-    Object.defineProperty(self, 'positionArray', {
-      value: this.initializePositions(self.labelArray),
-      writable: true
-    })
+    const _labelArray = self.initializeLabel(new Date()).split('')
+    self.labelArray = () => { return _labelArray }
+
+    const _circleSplit = 2 * Math.PI / _labelArray.length
+    self.circleSplit = () => { return _circleSplit }
+
+    const _clockWidth = clockWidth
+    self.clockWidth = () => { return _clockWidth }
+
+    const _clockHeight = clockHeight
+    self.clockHeight = () => { return _clockHeight }
+
+    const _speed = speed
+    self.speed = () => { return _speed }
+
+    var _currStep = 0
+    self.currStep = function (currStep) {
+      if (arguments.length > 0) {
+        _currStep = currStep
+      } else {
+        return _currStep
+      }
+    }
+
+    var _positionArray = this.initializePositions(_labelArray)
+    self.positionArray = function (positionArray) {
+      if (arguments.length > 0) {
+        _positionArray = positionArray
+      } else {
+        return _positionArray
+      }
+    }
 
     return self
   }
@@ -104,16 +108,16 @@ var ClockDateView = Object.assign(Object.create(Object.prototype), {
 
     return element
   },
-  initializeHtmlElements: function initializeHtmlElements (display, labelArray) {
+  initializeHtmlElements: function (display, labelArray) {
     const tag = display.document.getElementsByTagName('body')[0]
     return labelArray.map(label => this.createAndAttachHtmlElement(display, tag, label))
   },
-  updateCssPosition: function updateCssPosition (htmlElement, x, y) {
+  updateCssPosition: function (htmlElement, x, y) {
     htmlElement.style.left = x + 'px'
     htmlElement.style.top = y + 'px'
   },
-  updatePosition: function updatePosition (positionList) {
-    this.elementList.forEach((element, index) => {
+  updatePosition: function (positionList) {
+    this.elementList().forEach((element, index) => {
       const position = positionList[index]
       this.updateCssPosition(element, position.x, position.y)
     })
@@ -121,32 +125,29 @@ var ClockDateView = Object.assign(Object.create(Object.prototype), {
   create: function create (display, labelArray) {
     var self = Object.create(this)
 
-    Object.defineProperty(self, 'elementList', {
-      value: this.initializeHtmlElements(display, labelArray),
-      writable: false
-    })
+    const _elementList = self.initializeHtmlElements(display, labelArray)
+    self.elementList = () => { return _elementList }
+
     return self
   }
 })
 
 // presenter object
 const ClockDate = Object.assign({}, {
-  move: function move (point) {
-    this.model.update(point)
-    const displayPos = this.model.getDisplayPosition(this.model.positionArray)
-    this.view.updatePosition(displayPos)
+  move: function (point) {
+    const model = this.model()
+    model.update(point)
+    this.view().updatePosition(model.getDisplayPosition(model.positionArray()))
   },
-  create: function create (display, clockWidth, clockHeight, speed) {
+  create: function (display, clockWidth, clockHeight, speed) {
     var self = Object.create(this)
 
-    Object.defineProperty(self, 'model', {
-      value: ClockDateModel.create(clockWidth, clockHeight, speed),
-      writable: false
-    })
-    Object.defineProperty(self, 'view', {
-      value: ClockDateView.create(display, self.model.labelArray),
-      writable: false
-    })
+    const _model = ClockDateModel.create(clockWidth, clockHeight, speed)
+    self.model = () => { return _model }
+
+    const _view = ClockDateView.create(display, _model.labelArray())
+    self.view = () => { return _view }
+
     return self
   }
 })

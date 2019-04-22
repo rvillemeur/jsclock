@@ -4,57 +4,55 @@ import Point from './point.js'
 import ClockDate from './clockDate.js'
 
 const Clock = Object.assign({}, {
-  move: function move () {
+  move: function () {
     const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
-    this.date.move(position)
-    this.surround.update(position)
-    this.needlesSecond.update(position)
-    this.needlesMinute.update(position)
-    this.needlesHour.update(position)
+    this.date().move(position)
+    this.surround().update(position)
+    this.needlesSecond().update(position)
+    this.needlesMinute().update(position)
+    this.needlesHour().update(position)
   },
-  startClock: function startClock () {
+  startClock: function () {
     this.stopClock()
     const self = this
     self.timer = setInterval(() => { self.move() }, 20)
   },
-  stopClock: function stopClock () {
+  stopClock: function () {
     clearInterval(this.timer)
   },
 
   create: function create () {
     const self = Object.create(this)
-    Object.defineProperty(self, 'clockHeight', {
-      value: 40,
-      writable: false
-    })
-    Object.defineProperty(self, 'clockWidth', {
-      value: 40,
-      writable: false
-    })
-    Object.defineProperty(self, 'speed', {
-      value: 0.04,
-      writable: false
-    })
-    Object.defineProperty(self, 'date', {
-      value: ClockDate.create(window, self.clockWidth * 1.5, self.clockHeight * 1.5, self.speed),
-      writable: false
-    })
-    Object.defineProperty(self, 'surround', {
-      value: ClockSurround.create(self.clockWidth, self.clockHeight, self.speed),
-      writable: false
-    })
-    Object.defineProperty(self, 'needlesSecond', {
-      value: ClockNeedlesSecond.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
-      writable: false
-    })
-    Object.defineProperty(self, 'needlesMinute', {
-      value: ClockNeedlesMinute.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
-      writable: false
-    })
-    Object.defineProperty(self, 'needlesHour', {
-      value: ClockNeedlesHour.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
-      writable: false
-    })
+
+    const _clockHeight = 40
+    self.clockHeight = function clockHeight () {
+      return _clockHeight
+    }
+
+    const _clockWidth = 40
+    self.clockWidth = function clockWidth () {
+      return _clockWidth
+    }
+
+    const _speed = 0.04
+    self.speed = function speed () {
+      return _speed
+    }
+
+    const _date = ClockDate.create(window, _clockWidth * 1.5, _clockHeight * 1.5, _speed)
+    self.date = () => { return _date }
+
+    const _surround = ClockSurround.create(_clockWidth, _clockHeight, _speed)
+    self.surround = () => { return _surround }
+
+    const _needlesSecond = ClockNeedlesSecond.create(_clockWidth / 4.5, _clockHeight / 4.5, _speed)
+    self.needlesSecond = () => { return _needlesSecond }
+
+    const _needlesMinute = ClockNeedlesMinute.create(_clockWidth / 4.5, _clockHeight / 4.5, _speed)
+    self.needlesMinute = () => { return _needlesMinute }
+
+    const _needlesHour = ClockNeedlesHour.create(_clockWidth / 4.5, _clockHeight / 4.5, _speed)
+    self.needlesHour = () => { return _needlesHour }
 
     addEvent(document, 'mousemove', MousePosition.getPosition)
     return self
