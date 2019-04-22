@@ -4,7 +4,7 @@ import Clock from './clock.js'
 var MyClock
 
 function initClock () {
-  MyClock = Clock.create(40, 40, 0.04)
+  MyClock = Clock.create()
   addEvent(document.getElementById('start_clock'), 'click', () => {
     MyClock.startClock()
   })

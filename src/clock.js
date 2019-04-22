@@ -21,26 +21,38 @@ const Clock = Object.assign({}, {
     clearInterval(this.timer)
   },
 
-  create: function create (clockHeight = 40, clockWidth = 40, speed = 0.04) {
+  create: function create () {
     const self = Object.create(this)
+    Object.defineProperty(self, 'clockHeight', {
+      value: 40,
+      writable: false
+    })
+    Object.defineProperty(self, 'clockWidth', {
+      value: 40,
+      writable: false
+    })
+    Object.defineProperty(self, 'speed', {
+      value: 0.04,
+      writable: false
+    })
     Object.defineProperty(self, 'date', {
-      value: ClockDate.create(window, clockWidth * 1.5, clockHeight * 1.5, speed),
+      value: ClockDate.create(window, self.clockWidth * 1.5, self.clockHeight * 1.5, self.speed),
       writable: false
     })
     Object.defineProperty(self, 'surround', {
-      value: ClockSurround.create(clockWidth, clockHeight, speed),
+      value: ClockSurround.create(self.clockWidth, self.clockHeight, self.speed),
       writable: false
     })
     Object.defineProperty(self, 'needlesSecond', {
-      value: ClockNeedlesSecond.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      value: ClockNeedlesSecond.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
       writable: false
     })
     Object.defineProperty(self, 'needlesMinute', {
-      value: ClockNeedlesMinute.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      value: ClockNeedlesMinute.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
       writable: false
     })
     Object.defineProperty(self, 'needlesHour', {
-      value: ClockNeedlesHour.create(clockWidth / 4.5, clockHeight / 4.5, speed),
+      value: ClockNeedlesHour.create(self.clockWidth / 4.5, self.clockHeight / 4.5, self.speed),
       writable: false
     })
 
