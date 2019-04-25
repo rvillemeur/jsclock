@@ -2,7 +2,7 @@ import MousePosition from './mousemove.js'
 import addEvent from './common.js'
 import Point from './point.js'
 import ClockDate from './clockDate.js'
-import { ClockNeedleSecond, ClockNeedleHour } from './clockNeedle.js'
+import { ClockNeedleSecond, ClockNeedleHour, ClockNeedleMinute } from './clockNeedle.js'
 
 const Clock = Object.assign({}, {
   move: function () {
@@ -10,7 +10,7 @@ const Clock = Object.assign({}, {
     this.date().move(position)
     this.surround().update(position)
     this.needlesSecond().move(position)
-    this.needlesMinute().update(position)
+    this.needlesMinute().move(position)
     this.needlesHour().move(position)
   },
   startClock: function () {
@@ -49,7 +49,7 @@ const Clock = Object.assign({}, {
     const _needlesSecond = ClockNeedleSecond.create().initialize(window, _clockWidth / 4.5, _clockHeight / 4.5, _speed)
     self.needlesSecond = () => { return _needlesSecond }
 
-    const _needlesMinute = ClockNeedlesMinute.create(_clockWidth / 4.5, _clockHeight / 4.5, _speed)
+    const _needlesMinute = ClockNeedleMinute.create().initialize(window, _clockWidth / 4.5, _clockHeight / 4.5, _speed)
     self.needlesMinute = () => { return _needlesMinute }
 
     const _needlesHour = ClockNeedleHour.create().initialize(window, _clockWidth / 4.5, _clockHeight / 4.5, _speed)
@@ -128,29 +128,29 @@ const ClockCommonTraits = {
   }
 }
 
-const ClockNeedleCommonTraits = {
-  xNeedleRelativePosition: function xNeedleRelativePosition () {
-    return -2.5
-  },
-  yNeedleRelativePosition: function yNeedleRelativePosition () {
-    return -7
-  },
-  x: function x (position, index, date) {
-    return Math.round(position.point.x) + this.xNeedleRelativePosition() + this.xOffset(index * this.clockWidth, this.angle(date))
-  },
-  y: function y (position, index, date) {
-    return Math.round(position.point.y) + this.yNeedleRelativePosition() + this.yOffset(index * this.clockHeight, this.angle(date))
-  },
-  draw: function draw (date) {
-    this.position.forEach((position, index) => {
-      this.updateCssPosition(position.html, this.x(position, index, date), this.y(position, index, date))
-    })
-  },
-  update: function update (point) {
-    this.position = this.getNewPosition(this.position, point, this.speed, [])
-    this.draw(new Date())
-  }
-}
+// const ClockNeedleCommonTraits = {
+//   xNeedleRelativePosition: function xNeedleRelativePosition () {
+//     return -2.5
+//   },
+//   yNeedleRelativePosition: function yNeedleRelativePosition () {
+//     return -7
+//   },
+//   x: function x (position, index, date) {
+//     return Math.round(position.point.x) + this.xNeedleRelativePosition() + this.xOffset(index * this.clockWidth, this.angle(date))
+//   },
+//   y: function y (position, index, date) {
+//     return Math.round(position.point.y) + this.yNeedleRelativePosition() + this.yOffset(index * this.clockHeight, this.angle(date))
+//   },
+//   draw: function draw (date) {
+//     this.position.forEach((position, index) => {
+//       this.updateCssPosition(position.html, this.x(position, index, date), this.y(position, index, date))
+//     })
+//   },
+//   update: function update (point) {
+//     this.position = this.getNewPosition(this.position, point, this.speed, [])
+//     this.draw(new Date())
+//   }
+// }
 
 const ClockSurround = Object.assign({}, ClockCommonTraits, {
   updateCurrStep: function updateCurrStep () {
@@ -241,30 +241,30 @@ const ClockSurround = Object.assign({}, ClockCommonTraits, {
 //   }
 // })
 
-const ClockNeedlesMinute = Object.assign({}, ClockCommonTraits, ClockNeedleCommonTraits, {
-  angle: function angle (date) {
-    return (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30)
-  },
-  create: function create (clockWidth, clockHeight, speed) {
-    const self = Object.create(this)
+// const ClockNeedlesMinute = Object.assign({}, ClockCommonTraits, ClockNeedleCommonTraits, {
+//   angle: function angle (date) {
+//     return (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30)
+//   },
+//   create: function create (clockWidth, clockHeight, speed) {
+//     const self = Object.create(this)
 
-    Object.defineProperty(self, 'clockWidth', {
-      value: clockWidth,
-      writable: false
-    })
-    Object.defineProperty(self, 'clockHeight', {
-      value: clockHeight,
-      writable: false
-    })
-    Object.defineProperty(self, 'speed', {
-      value: speed,
-      writable: false
-    })
+//     Object.defineProperty(self, 'clockWidth', {
+//       value: clockWidth,
+//       writable: false
+//     })
+//     Object.defineProperty(self, 'clockHeight', {
+//       value: clockHeight,
+//       writable: false
+//     })
+//     Object.defineProperty(self, 'speed', {
+//       value: speed,
+//       writable: false
+//     })
 
-    self.position = this.initializePositions('....'.split(''))
+//     self.position = this.initializePositions('....'.split(''))
 
-    return self
-  }
-})
+//     return self
+//   }
+// })
 
-export { Clock as default, ClockDate, ClockSurround, ClockNeedlesMinute, ClockCommonTraits, ClockNeedleCommonTraits }
+export { Clock as default, ClockDate, ClockSurround, ClockCommonTraits }
