@@ -1,5 +1,5 @@
 
-import { NeedleTraits, NeedleModelTraits } from './ClockNeedle.Traits.js'
+import { NeedlePresenterTraits, NeedleModelTraits } from './ClockNeedle.Traits.js'
 
 const ClockNeedlesSecondModel = Object.assign({}, NeedleModelTraits, {
   angle (date) {
@@ -39,7 +39,7 @@ const ClockNeedleMinuteModel = Object.assign({}, NeedleModelTraits, {
 })
 
 // presenter object
-const ClockNeedleSecond = Object.assign({}, NeedleTraits, {
+const ClockNeedleSecond = Object.assign({}, NeedlePresenterTraits, {
   initialize (display, clockWidth, clockHeight, speed) {
     this.model = ClockNeedlesSecondModel.create().initialize(clockWidth, clockHeight, speed)
 
@@ -49,7 +49,7 @@ const ClockNeedleSecond = Object.assign({}, NeedleTraits, {
   }
 })
 
-const ClockNeedleHour = Object.assign({}, NeedleTraits, {
+const ClockNeedleHour = Object.assign({}, NeedlePresenterTraits, {
   initialize (display, clockWidth, clockHeight, speed) {
     this.model = ClockNeedlesHourModel.create().initialize(clockWidth, clockHeight, speed)
 
@@ -59,7 +59,7 @@ const ClockNeedleHour = Object.assign({}, NeedleTraits, {
   }
 })
 
-const ClockNeedleMinute = Object.assign({}, NeedleTraits, {
+const ClockNeedleMinute = Object.assign({}, NeedlePresenterTraits, {
   initialize (display, clockWidth, clockHeight, speed) {
     this.model = ClockNeedleMinuteModel.create().initialize(clockWidth, clockHeight, speed)
 

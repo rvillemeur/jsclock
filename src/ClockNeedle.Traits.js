@@ -1,7 +1,7 @@
 import ClockView from './ClockView.js'
 import Point from './point.js'
 
-const NeedleTraits = {
+const NeedlePresenterTraits = {
   move (point) {
     const model = this.model
     model.update(point)
@@ -111,4 +111,4 @@ const NeedleModelTraits = {
   }
 }
 
-export { NeedleTraits, NeedleModelTraits }
+export { NeedlePresenterTraits, NeedleModelTraits }
