@@ -39,5 +39,16 @@
     "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.14"
   },
-  "dependencies": {}
+  "dependencies": {},
+  "nyc": {
+    "include": [
+      "src/**/*.js"
+    ],
+    "exclude": [
+      "/",
+      "dist/",
+      "test/**",
+      "test{,-*}.js"
+    ]
+  }
 }
