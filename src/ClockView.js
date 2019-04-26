@@ -1,5 +1,4 @@
-
-var ClockView = Object.assign(Object.create(Object.prototype), {
+const ClockView = Object.assign(Object.create(Object.prototype), {
   createAndAttachHtmlElement (display, tag, label) {
     const element = display.document.createElement('div')
 

@@ -69,4 +69,4 @@ const ClockNeedleMinute = Object.assign({}, ClockPresenterTraits, {
   }
 })
 
-export { ClockNeedleSecond, ClockNeedleHour, ClockNeedleMinute }
+export { ClockNeedleSecond, ClockNeedleHour, ClockNeedleMinute, ClockNeedlesSecondModel, ClockNeedlesHourModel, ClockNeedleMinuteModel }
