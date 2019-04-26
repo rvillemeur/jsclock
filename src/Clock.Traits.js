@@ -45,12 +45,6 @@ const ClockCommonModelTraits = {
 
     return getNewPosition(OriginalpositionArray, newPoint, speed, newPositionArray)
   },
-  getDisplayPosition: function (positionArray) {
-    const pos = positionArray.map((position, index) => {
-      return Point.create(this.x(position, index), this.y(position, index))
-    })
-    return pos
-  },
   xOffset: function (width, angle) {
     return width * Math.cos(angle)
   },
@@ -59,21 +53,6 @@ const ClockCommonModelTraits = {
   }
 }
 const NeedleModelTraits = {
-  initializePositions (labelArray) {
-    return labelArray.map((label) => Point.create(0, 0))
-  },
-  getNewPosition (OriginalpositionArray, initPoint, speed, newPositionArray) {
-    if (OriginalpositionArray.length === 0) {
-      return newPositionArray
-    }
-    const currentPoint = OriginalpositionArray.shift()
-    newPositionArray.push(initPoint)
-
-    const newPoint = currentPoint.addVector(
-      initPoint.getDistance(currentPoint).multiply(speed))
-
-    return this.getNewPosition(OriginalpositionArray, newPoint, speed, newPositionArray)
-  },
   update (point) {
     const newPositionArray = this.getNewPosition(this.positionArray, point, this.speed, [])
     this.positionArray = newPositionArray
@@ -84,12 +63,6 @@ const NeedleModelTraits = {
       return Point.create(this.x(position, index, date), this.y(position, index, date))
     })
     return pos
-  },
-  xOffset (width, angle) {
-    return width * Math.cos(angle)
-  },
-  yOffset (heigth, angle) {
-    return heigth * Math.sin(angle)
   },
   x (position, index, date) {
     return Math.round(position.x) + this.xNeedleRelativePosition + this.xOffset(index * this.clockWidth, this.angle(date))
@@ -143,20 +116,25 @@ const NeedleModelTraits = {
 }
 
 const ClockModelTraits = {
-  update: function (point) {
+  update (point) {
     const newPositionArray = this.getNewPosition(this.positionArray, point, this.speed, [])
     this.positionArray = newPositionArray
     this.updateCurrStep()
   },
-
-  angle: function (currStep, index, split) {
+  getDisplayPosition: function (positionArray) {
+    const pos = positionArray.map((position, index) => {
+      return Point.create(this.x(position, index), this.y(position, index))
+    })
+    return pos
+  },
+  angle (currStep, index, split) {
     return currStep + index * split
   },
-  x: function (position, index) {
+  x (position, index) {
     return Math.round(position.x) +
             this.xOffset(this.clockWidth, this.angle(this.currStep, index, this.circleSplit))
   },
-  y: function (position, index) {
+  y (position, index) {
     return Math.round(position.y) +
             this.yOffset(this.clockHeight, this.angle(this.currStep, index, this.circleSplit))
   },

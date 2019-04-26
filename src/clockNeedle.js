@@ -1,7 +1,7 @@
 
-import { ClockPresenterTraits, NeedleModelTraits } from './Clock.Traits.js'
+import { ClockPresenterTraits, NeedleModelTraits, ClockCommonModelTraits } from './Clock.Traits.js'
 
-const ClockNeedlesSecondModel = Object.assign({}, NeedleModelTraits, {
+const ClockNeedlesSecondModel = Object.assign({}, ClockCommonModelTraits, NeedleModelTraits, {
   angle (date) {
     return (-Math.PI / 2) + (Math.PI * date.getSeconds() / 30)
   },
@@ -13,7 +13,7 @@ const ClockNeedlesSecondModel = Object.assign({}, NeedleModelTraits, {
   }
 })
 
-const ClockNeedlesHourModel = Object.assign({}, NeedleModelTraits, {
+const ClockNeedlesHourModel = Object.assign({}, ClockCommonModelTraits, NeedleModelTraits, {
   angle (date) {
     const minuteOffset = Math.PI * parseInt(date.getMinutes()) / 360
     return (-Math.PI / 2) + (Math.PI * date.getHours() / 6) + minuteOffset
@@ -26,7 +26,7 @@ const ClockNeedlesHourModel = Object.assign({}, NeedleModelTraits, {
   }
 })
 
-const ClockNeedleMinuteModel = Object.assign({}, NeedleModelTraits, {
+const ClockNeedleMinuteModel = Object.assign({}, ClockCommonModelTraits,NeedleModelTraits, {
   angle (date) {
     return (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30)
   },

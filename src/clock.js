@@ -6,7 +6,7 @@ import { ClockNeedleSecond, ClockNeedleHour, ClockNeedleMinute } from './clockNe
 import ClockSurround from './ClockSurround.js'
 
 const Clock = Object.assign({}, {
-  move: function () {
+  move () {
     const position = Point.create(MousePosition.x + 75, MousePosition.y + 75)
     this.date.move(position)
     this.surround.move(position)
@@ -14,15 +14,15 @@ const Clock = Object.assign({}, {
     this.needlesMinute.move(position)
     this.needlesHour.move(position)
   },
-  startClock: function () {
+  startClock () {
     this.stopClock()
     const self = this
     self.timer = setInterval(() => { self.move() }, 20)
   },
-  stopClock: function () {
+  stopClock () {
     clearInterval(this.timer)
   },
-  create: function create () {
+  create () {
     const self = Object.create(this)
 
     Object.defineProperty(self, 'clockHeight', {
