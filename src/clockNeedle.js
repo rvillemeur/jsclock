@@ -26,7 +26,7 @@ const ClockNeedlesHourModel = Object.assign({}, ClockCommonModelTraits, NeedleMo
   }
 })
 
-const ClockNeedleMinuteModel = Object.assign({}, ClockCommonModelTraits,NeedleModelTraits, {
+const ClockNeedleMinuteModel = Object.assign({}, ClockCommonModelTraits, NeedleModelTraits, {
   angle (date) {
     return (-Math.PI / 2) + (Math.PI * date.getMinutes() / 30)
   },
@@ -68,4 +68,5 @@ const ClockNeedleMinute = Object.assign({}, ClockPresenterTraits, {
     return this
   }
 })
+
 export { ClockNeedleSecond, ClockNeedleHour, ClockNeedleMinute }
