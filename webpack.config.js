@@ -9,9 +9,9 @@ module.exports = {
   },
   devServer: {
     https: {
-      key: fs.readFileSync('C://devzone//ssl//server.key'),
-      cert: fs.readFileSync('C://devzone//ssl//server.crt'),
-      ca: fs.readFileSync('C://devzone//ssl//server.pem')
+      key: fs.readFileSync('/home/user/devzone/ssl/server.key'),
+      cert: fs.readFileSync('/home/user/devzone/ssl/server.crt'),
+      ca: fs.readFileSync('/home/user/devzone/ssl/server.pem')
     },
     index: 'Clock.html',
     port: 8081
